@@ -1,0 +1,40 @@
+{
+  "provenance": {
+    "tasks_path": "/kaggle/input/competitions/gemma-4-developer-agent/tasks.jsonl",
+    "tasks_sha256": "e4b3fd60f69dbc2b9213e54eeb9636db78aefe92c1d06269d73d9f5f8f3c8ad6",
+    "task_count": 129,
+    "problem_bytes_quantiles": [
+      42.0,
+      420.0,
+      1806.2000000000003,
+      10100.0
+    ]
+  },
+  "prompt_measurements": [
+    {
+      "variant": "v2",
+      "prompt_template_bytes": 5351,
+      "expanded_prompt_bytes_p50": 5750.0,
+      "expanded_prompt_bytes_p90": 7136.200000000001
+    },
+    {
+      "variant": "v3",
+      "prompt_template_bytes": 3340,
+      "expanded_prompt_bytes_p50": 3739.0,
+      "expanded_prompt_bytes_p90": 5125.200000000001
+    }
+  ],
+  "template_bytes_saved": 2011,
+  "verified_historical_scores": {
+    "58201114": 0.18,
+    "58250000": 0.15
+  },
+  "score_delta": -0.03,
+  "limitations": [
+    "One evaluation per variant",
+    "Multiple configuration changes",
+    "No paired task outcomes",
+    "No causal solve-rate attribution",
+    "No inference executed by CPU companion"
+  ]
+}

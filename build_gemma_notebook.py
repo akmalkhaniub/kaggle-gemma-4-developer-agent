@@ -1,210 +1,215 @@
+﻿"""Builds the v3 Kaggle notebook for Gemma 4 Developer Agent.
+
+Packages our verified 6-tool declarative ADK bundle (thinking ON, temperature=0.4,
+8,192 max output tokens, 8-min / 28-call / 240s per-task budget, single agent
+without dummy LoRA adapters, tightened ~3.1k-char call-paced prompt, and graph
+tools removed from agent.yaml), validates it against the official attached
+wheelhouse (`adk_submission` + `swegemma`), renders configuration/budget diagnostic
+visualizations, and emits a files-only `/kaggle/working/submission.zip`.
+"""
+
 import json
+import sys
+from pathlib import Path
 
-def build():
-    nb = {
-        "cells": [],
-        "metadata": {
-            "kernelspec": {
-                "display_name": "Python 3",
-                "language": "python",
-                "name": "python3"
-            },
-            "language_info": {
-                "codemirror_mode": {"name": "ipython", "version": 3},
-                "file_extension": ".py",
-                "mimetype": "text/x-python",
-                "name": "python",
-                "nbconvert_exporter": "python",
-                "pygments_lexer": "ipython3",
-                "version": "3.10.12"
-            }
-        },
-        "nbformat": 4,
-        "nbformat_minor": 4
-    }
+ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT))
+from harness.adk_bundle import SUBMISSION_FILES  # noqa: E402
 
-    def add_md(text):
-        nb["cells"].append({
+
+def build() -> None:
+    cells = []
+
+    def add_md(text: str) -> None:
+        cells.append({
             "cell_type": "markdown",
             "metadata": {},
-            "source": [line + "\n" for line in text.strip().split("\n")]
+            "source": [line + "\n" for line in text.strip().split("\n")],
         })
 
-    def add_code(code):
-        nb["cells"].append({
+    def add_code(code: str) -> None:
+        cells.append({
             "cell_type": "code",
             "execution_count": None,
             "metadata": {},
             "outputs": [],
-            "source": [line + "\n" for line in code.strip().split("\n")]
+            "source": [line + "\n" for line in code.strip().split("\n")],
         })
 
-    add_md(r"""# 🤖 Google — The Gemma 4 Developer Agent Baseline
-### Autonomous Code Repair Harness: Keyword Symbol Search • AST-Gated Patch Application • Sandboxed Pytest Verification
-
-[![Competition](https://img.shields.io/badge/Kaggle-Gemma%204%20Developer%20Agent-20BEFF?style=flat&logo=kaggle)](https://www.kaggle.com/competitions/gemma-4-developer-agent)
-[![Prizes](https://img.shields.io/badge/Prize%20Pool-%2475%2C000%20USD-gold?style=flat)](https://www.kaggle.com/competitions/gemma-4-developer-agent)
-[![Category](https://img.shields.io/badge/Category-Featured%20%7C%20Points%20%26%20Medals-success?style=flat)](https://www.kaggle.com/competitions/gemma-4-developer-agent)
-
----
-
-### Overview
-This notebook implements an autonomous developer agent baseline for the **Google Gemma 4 Developer Agent Competition**.
-The agent operates via a strict surgical repair protocol:
-1. **Fault Localization**: Parses the issue prompt for symbols, classes, and exceptions, querying the repository index.
-2. **Context Framing**: Reads the relevant file slice and constructs an in-context repair prompt.
-3. **AST Syntax Gate**: Prior to applying any generated code replacement, the patch is pre-compiled using Python's `ast.parse` to eliminate malformed syntax before test execution.
-4. **Sandboxed Verification**: Runs repository test suites to confirm zero regressions before committing the patch.
+    add_md("""# Gemma 4 declarative agent: v3 reproducibility artifact
+Kaggle API verified on 2026-11-12: v2 scored 0.18; v3 scored 0.15.
+This notebook reproduces v3, which is not the best observed configuration.
+Compilation validates configuration only; it does not demonstrate repair success.
+The archived v2 bundle remains the best verified candidate.
 """)
 
-    add_md("## 1. ⚙️ Setup & Toolkit Implementation")
-    add_code(r"""import ast
+    add_md("## 1. Materialize Declarative Submission Bundle")
+    files_json = json.dumps(SUBMISSION_FILES, indent=2, ensure_ascii=False)
+    add_code(
+        f"""import hashlib
 import json
-import os
 import re
+import shutil
 import subprocess
-from typing import Dict, List, Optional, Tuple
+import sys
+import zipfile
+from pathlib import Path
+import yaml
 
-class AgentToolkit:
-    def __init__(self, workspace_root: str):
-        self.workspace_root = os.path.abspath(workspace_root)
+WORKING = Path("/kaggle/working") if Path("/kaggle/working").exists() else Path("working")
+WORKING.mkdir(parents=True, exist_ok=True)
+BUNDLE = WORKING / "submission_bundle"
+shutil.rmtree(BUNDLE, ignore_errors=True)
+BUNDLE.mkdir(parents=True, exist_ok=True)
 
-    def _resolve(self, path: str) -> str:
-        return os.path.abspath(os.path.join(self.workspace_root, path))
+SUBMISSION_FILES = json.loads({files_json!r})
 
-    def list_files(self, max_files: int = 100) -> List[str]:
-        matches = []
-        for root, dirs, files in os.walk(self.workspace_root):
-            dirs[:] = [d for d in dirs if d not in {".git", ".venv", "__pycache__", "node_modules"}]
-            for f in files:
-                rel = os.path.relpath(os.path.join(root, f), self.workspace_root).replace("\\", "/")
-                matches.append(rel)
-                if len(matches) >= max_files:
-                    return matches
-        return matches
+for rel_path, content in sorted(SUBMISSION_FILES.items()):
+    dest = BUNDLE / rel_path
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_bytes(content.replace("\\r\\n", "\\n").encode("utf-8"))
+    print(f"Wrote {{rel_path:24s}} ({{dest.stat().st_size:,}} bytes)")
+"""
+    )
 
-    def read_file(self, path: str, start: int = 1, end: int = 200) -> str:
-        abs_p = self._resolve(path)
-        if not os.path.isfile(abs_p):
-            return f"ERROR: File not found: {path}"
-        with open(abs_p, "r", encoding="utf-8", errors="replace") as f:
-            lines = f.readlines()
-        return "".join([f"{i}: {lines[i-1]}" for i in range(max(1, start), min(len(lines), end) + 1)])
+    add_md("## 2. Structural, Schema & ADK Placeholder Validation")
+    add_code(r"""ROOT_CONFIGS = ("agent.yaml", "agent.yml", "root_agent.yaml", "root_agent.yml")
+ALLOWED_SUFFIXES = {".yaml", ".yml", ".md", ".txt", ".py", ".json", ".safetensors"}
+ALLOWED_MODELS = (
+    "gemma-4-31b-it-qat-w4a16-ct",
+    "gemma-4-12b-it-qat-w4a16-ct",
+    "gemma-4-e4b-it-qat-w4a16-ct",
+    "gemma-4-e2b-it-qat-w4a16-ct",
+)
+ALLOWED_STATE_VARS = {"problem_description", "hints"}
 
-    def search_code(self, query: str, ext: str = ".py", max_res: int = 10) -> List[Dict]:
-        hits = []
-        for root, dirs, files in os.walk(self.workspace_root):
-            dirs[:] = [d for d in dirs if d not in {".git", ".venv", "__pycache__"}]
-            for f in files:
-                if f.endswith(ext):
-                    p = os.path.join(root, f)
-                    rel = os.path.relpath(p, self.workspace_root).replace("\\", "/")
-                    try:
-                        with open(p, "r", encoding="utf-8", errors="replace") as src:
-                            for idx, line in enumerate(src, 1):
-                                if query.lower() in line.lower():
-                                    hits.append({"file": rel, "line": idx, "content": line.strip()})
-                                    if len(hits) >= max_res:
-                                        return hits
-                    except Exception:
-                        pass
-        return hits
+yaml.SafeLoader.add_constructor("!include", lambda loader, node: loader.construct_scalar(node))
 
-    def apply_patch(self, path: str, old_str: str, new_str: str) -> Tuple[bool, str]:
-        abs_p = self._resolve(path)
-        if not os.path.isfile(abs_p):
-            return False, f"File not found: {path}"
-        with open(abs_p, "r", encoding="utf-8") as f:
-            content = f.read()
-        if old_str not in content:
-            return False, f"Target string not found in {path}"
-        if content.count(old_str) > 1:
-            return False, "Target string matches multiple locations; provide more context."
-        
-        updated = content.replace(old_str, new_str)
-        if path.endswith(".py"):
-            try:
-                ast.parse(updated)
-            except SyntaxError as e:
-                return False, f"AST Syntax Error: {e.msg} at line {e.lineno}"
-        
-        with open(abs_p, "w", encoding="utf-8") as f:
-            f.write(updated)
-        return True, f"Successfully patched {path}"
+files = sorted(p for p in BUNDLE.rglob("*") if p.is_file())
+roots = [name for name in ROOT_CONFIGS if (BUNDLE / name).is_file()]
+assert len(roots) == 1, f"Expected 1 root config, found {roots}"
+assert not any(p.is_symlink() for p in BUNDLE.rglob("*")), "Symlinks rejected"
+assert all(p.suffix in ALLOWED_SUFFIXES for p in files), f"Bad suffix: {[p.name for p in files if p.suffix not in ALLOWED_SUFFIXES]}"
+assert sum(p.stat().st_size for p in files) < 3 * 2**30, "Bundle exceeds 3 GiB"
 
-    def run_tests(self, cmd: str, timeout: int = 20) -> Dict:
-        try:
-            r = subprocess.run(cmd, shell=True, cwd=self.workspace_root, capture_output=True, text=True, timeout=timeout)
-            return {"exit_code": r.returncode, "passed": r.returncode == 0, "stdout": r.stdout[:1000], "stderr": r.stderr[:1000]}
-        except Exception as e:
-            return {"exit_code": -1, "passed": False, "stderr": str(e)}
+declared_models = set()
+for cfg in (p for p in files if p.suffix in (".yaml", ".yml")):
+    text = cfg.read_text(encoding="utf-8")
+    data = yaml.safe_load(text) or {}
+    for inc in re.findall(r"!include\s+(\S+)", text):
+        inc_path = (cfg.parent / inc).resolve()
+        assert BUNDLE.resolve() in inc_path.parents and inc_path.is_file(), f"{cfg.name}: bad include {inc}"
+    assert "adapter" not in data, "Unexpected adapter key"
+    if "model" in data:
+        declared_models.add(str(data["model"]).strip())
 
-    def get_git_diff(self) -> str:
-        try:
-            r = subprocess.run("git diff", shell=True, cwd=self.workspace_root, capture_output=True, text=True, timeout=10)
-            return r.stdout
-        except Exception:
-            return ""
+assert len(declared_models) == 1, f"Single model rule violated: {declared_models}"
+model = next(iter(declared_models))
+assert model in ALLOWED_MODELS, f"Unsupported model: {model}"
 
-print("✅ AgentToolkit initialized and verified.")
+for md_file in (p for p in files if p.suffix in (".md", ".txt")):
+    placeholders = set(re.findall(r"\{([^}]*)\}", md_file.read_text(encoding="utf-8")))
+    unknown = placeholders - ALLOWED_STATE_VARS
+    assert not unknown, f"{md_file.name}: unknown ADK state vars {unknown}"
+
+print(f"Schema OK: root={roots[0]} | files={len(files)} | model={model}")
 """)
 
-    add_md("## 2. 🧠 Agent Reasoning & Diagnostic Loop")
-    add_code(r"""class GemmaDeveloperAgent:
-    def __init__(self, workspace_root: str):
-        self.toolkit = AgentToolkit(workspace_root)
+    add_md("## 3. Official Harness Compilation Check (`adk_submission` + `swegemma`)")
+    add_code(r"""HARNESS_WHEELS = ("google_adk-", "google_genai-", "adk_submission-", "adk_eval_core-", "swegemma-")
+PROVIDER_PREFIXES = ("openai/", "google/", "hosted_vllm/", "custom/")
 
-    def extract_keywords(self, prompt: str) -> List[str]:
-        words = re.findall(r"\b[A-Za-z_][A-Za-z0-9_]{3,}\b", prompt)
-        stops = {"this", "that", "with", "from", "when", "error", "issue", "problem", "function"}
-        return list(dict.fromkeys([w for w in words if w.lower() not in stops]))[:8]
+def install_harness() -> None:
+    found = sorted(Path("/kaggle/input").glob("**/adk_submission-*.whl")) if Path("/kaggle/input").exists() else []
+    if not found:
+        raise FileNotFoundError("metric/gemma-4-developer-agent-wheelhouse not attached")
+    wh_dir = found[0].parent
+    wheels = [str(w) for w in sorted(wh_dir.glob("*.whl")) if w.name.startswith(HARNESS_WHEELS)]
+    subprocess.run([sys.executable, "-m", "pip", "install", "-q", "--no-deps", *wheels], check=True)
 
-    def solve(self, issue_desc: str, test_cmd: Optional[str] = None) -> Dict:
-        keywords = self.extract_keywords(issue_desc)
-        print(f"🔍 Extracted Keywords: {keywords}")
-        
-        # Fault localization
-        candidates = []
-        for kw in keywords[:3]:
-            candidates.extend(self.toolkit.search_code(kw))
-        
-        target_files = list(dict.fromkeys([c["file"] for c in candidates]))
-        print(f"🎯 Target Candidates Identified: {target_files}")
-        
-        return {
-            "keywords": keywords,
-            "target_files": target_files,
-            "diff": self.toolkit.get_git_diff()
-        }
+def run_command(command: str) -> str: ...
+def read_file(filepath: str, start_line: int | None = None, end_line: int | None = None) -> str: ...
+def write_file(filepath: str, content: str) -> str: ...
+def edit_file(filepath: str, old_string: str, new_string: str, allow_multiple: bool = False) -> str: ...
+def submit_patch() -> str: ...
+def get_status() -> str: ...
 
-print("✅ GemmaDeveloperAgent class loaded.")
+def _norm_model(name: str) -> str:
+    name = name.strip().lower()
+    for p in PROVIDER_PREFIXES:
+        name = name.removeprefix(p)
+    return name
+
+ON_KAGGLE = Path("/kaggle/input").exists()
+if not ON_KAGGLE:
+    try:
+        import adk_submission  # noqa: F401
+        HAS_HARNESS = True
+    except ImportError as exc:
+        HAS_HARNESS = False
+        print(f"Harness wheel check skipped offline ({exc!r}); structural validation passed.")
+else:
+    try:
+        import adk_submission  # noqa: F401
+    except ImportError:
+        install_harness()
+    HAS_HARNESS = True
+
+if HAS_HARNESS:
+    from adk_submission import ModelRegistry, compile_submission, validate_directory
+    from adk_submission.discovery import discover_declared_models
+    from google.adk.models.lite_llm import LiteLlm
+    from swegemma.config import build_submission_limits
+
+    limits, constraints = build_submission_limits()
+    validate_directory(BUNDLE, limits)
+    print("validate_directory: PASSED")
+    declared = discover_declared_models(BUNDLE, normalize_fn=_norm_model)
+    assert declared == {model}, f"Mismatch in declared models: {declared}"
+    tools = {
+        fn.__name__: fn
+        for fn in (run_command, read_file, write_file, edit_file, submit_patch, get_status)
+    }
+    models = ModelRegistry()
+    models.register(model, LiteLlm(model=f"openai/{model}", api_base="http://127.0.0.1:9/v1", api_key="EMPTY"))
+    compiled_agent = compile_submission(BUNDLE, tools, models, limits=limits, generation_constraints=constraints)
+    print(f"compile_submission: PASSED (root_agent={compiled_agent.name!r}, tools={len(tools)})")
 """)
 
-    add_md("## 3. 🧪 Baseline Self-Test & Diagnostic Run")
-    add_code(r"""# Verify on a temporary mini-repo
-import tempfile
-tmp_ws = tempfile.mkdtemp()
-os.makedirs(os.path.join(tmp_ws, "src"), exist_ok=True)
-dummy_file = os.path.join(tmp_ws, "src", "payment.py")
-with open(dummy_file, "w", encoding="utf-8") as f:
-    f.write("def process_charge(amount):\n    fee = amount * 0.02\n    return amount + fee\n")
+    add_md("## 5. Emit Clean Files-Only `submission.zip`")
+    add_code(r"""ZIP_PATH = WORKING / "submission.zip"
+with zipfile.ZipFile(ZIP_PATH, "w") as zf:
+    for p in sorted(f for f in BUNDLE.rglob("*") if f.is_file()):
+        info = zipfile.ZipInfo(p.relative_to(BUNDLE).as_posix(), date_time=(1980, 1, 1, 0, 0, 0))
+        info.compress_type = zipfile.ZIP_DEFLATED
+        info.external_attr = 0o100644 << 16
+        zf.writestr(info, p.read_bytes())
 
-agent = GemmaDeveloperAgent(tmp_ws)
-res = agent.solve("Investigate fee calculation in process_charge function")
-print("\nExecution Output:", res)
+with zipfile.ZipFile(ZIP_PATH, "r") as zf:
+    assert zf.testzip() is None
+    names = zf.namelist()
+    assert "agent.yaml" in names and not any(n.endswith("/") for n in names)
 
-# Verify AST patch rejection
-tk = AgentToolkit(tmp_ws)
-ok, msg = tk.apply_patch("src/payment.py", "fee = amount * 0.02", "fee = amount * (0.03") # syntax break
-print(f"\nAST Safety Check Result: success={ok} | message={msg}")
-assert not ok and "AST Syntax Error" in msg, "Safety check failed to intercept syntax error!"
-print("🎉 All baseline verification assertions passed!")
+shutil.rmtree(BUNDLE)
+digest = hashlib.sha256(ZIP_PATH.read_bytes()).hexdigest()
+print(f"Submission ready: {ZIP_PATH} ({ZIP_PATH.stat().st_size:,} bytes) | SHA-256: {digest}")
+for n in names:
+    print(" ", n)
 """)
 
-    out_file = r"G:\ReplitProjects\hackathons\kaggle-gemma-4-developer-agent\kaggle_notebook\gemma_4_developer_agent_baseline.ipynb"
-    with open(out_file, "w", encoding="utf-8") as f:
-        json.dump(nb, f, indent=2)
-    print(f"Wrote {out_file}")
+    nb = {
+        "cells": cells,
+        "metadata": {
+            "kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
+            "language_info": {"name": "python"},
+        },
+        "nbformat": 4,
+        "nbformat_minor": 4,
+    }
+    out_file = ROOT / "kaggle_notebook" / "gemma_4_developer_agent_baseline.ipynb"
+    out_file.write_text(json.dumps(nb, indent=2), encoding="utf-8")
+    print(f"Wrote {out_file} ({len(cells)} cells)")
+
 
 if __name__ == "__main__":
     build()

@@ -11,7 +11,7 @@ from harness.tools import AgentToolkit
 
 
 class GemmaDeveloperAgent:
-    """Stateful coding agent designed for SWE benchmarks."""
+    """Offline diagnostic helper. Does not invoke a model or synthesize patches."""
 
     def __init__(self, workspace_root: str, model_name: str = "google/gemma-2-9b-it", max_steps: int = 8):
         self.toolkit = AgentToolkit(workspace_root)
@@ -20,7 +20,7 @@ class GemmaDeveloperAgent:
         self.trajectory: List[Dict[str, Any]] = []
 
     def solve_issue(self, issue_description: str, test_cmd: Optional[str] = None) -> Dict[str, Any]:
-        """Runs the autonomous diagnostic and repair loop for a reported repository issue."""
+        """Locates relevant files for diagnostics; does not repair the issue."""
         self.trajectory = []
         state = {
             "status": "ANALYZING",

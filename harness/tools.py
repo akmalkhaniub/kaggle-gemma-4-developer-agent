@@ -11,14 +11,14 @@ from typing import Dict, List, Optional, Tuple
 
 
 class AgentToolkit:
-    """Production sandbox tools for autonomous software engineering agents."""
+    """Local diagnostic helpers; shell commands are not sandboxed."""
 
     def __init__(self, workspace_root: str):
-        self.workspace_root = os.path.abspath(workspace_root)
+        self.workspace_root = os.path.realpath(workspace_root)
 
     def _resolve_path(self, file_path: str) -> str:
-        full_path = os.path.abspath(os.path.join(self.workspace_root, file_path))
-        if not full_path.startswith(self.workspace_root):
+        full_path = os.path.realpath(os.path.join(self.workspace_root, file_path))
+        if os.path.commonpath([self.workspace_root, full_path]) != self.workspace_root:
             raise PermissionError(f"Access denied outside workspace boundary: {file_path}")
         return full_path
 
@@ -95,7 +95,7 @@ class AgentToolkit:
             # Syntax validation if Python file
             if file_path.endswith(".py"):
                 try:
-                    ast.parse(updated)
+                    compile(updated, file_path, "exec")
                 except SyntaxError as syn_err:
                     return False, f"Syntax error in replacement: {syn_err.msg} at line {syn_err.lineno}"
             

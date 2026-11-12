@@ -1,0 +1,27 @@
+[
+  {
+    "variant": "v4_tools_only",
+    "control_submission": "58201114",
+    "changed_files": [
+      "agent.yaml"
+    ],
+    "sha256": "da33053fc47c61c1208c9b03f168ee4f65766d8a29d805dcf85020db4e1a2be6",
+    "status": "SubmissionStatus.PENDING",
+    "hypothesis": "Remove unused tool schemas",
+    "unchanged": "All other bundle files byte-identical to v2",
+    "submission_ref": "58271330",
+    "public_score": ""
+  },
+  {
+    "variant": "v5_temperature_only",
+    "control_submission": "58201114",
+    "changed_files": [
+      "configs/sampling.yaml"
+    ],
+    "sha256": "3740058bd0bd8b3fe3305c06bf2728be3f76abcaee5c23fe66d5735fd15b9ba1",
+    "status": "NOT_SUBMITTED_DAILY_QUOTA",
+    "hypothesis": "Reduce sampling variability",
+    "unchanged": "All other bundle files byte-identical to v2",
+    "submission_ref": null
+  }
+]

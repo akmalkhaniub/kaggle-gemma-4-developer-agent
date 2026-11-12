@@ -1,60 +1,34 @@
-# 🤖 Google — The Gemma 4 Developer Agent Competition ($75,000 USD)
+# Gemma 4 developer-agent and paper submissions
 
-[![Competition](https://img.shields.io/badge/Kaggle-Gemma%204%20Developer%20Agent-20BEFF?style=flat&logo=kaggle)](https://www.kaggle.com/competitions/gemma-4-developer-agent)
-[![Prizes](https://img.shields.io/badge/Prize%20Pool-%2475%2C000%20USD-gold?style=flat)](https://www.kaggle.com/competitions/gemma-4-developer-agent)
-[![Category](https://img.shields.io/badge/Category-Featured%20%7C%20Points%20%26%20Medals-success?style=flat)](https://www.kaggle.com/competitions/gemma-4-developer-agent)
-[![Tests](https://img.shields.io/badge/Pytest-5%2F5%20Passing-brightgreen?style=flat)](tests/)
+## Verified competition results
 
-Autonomous Software Engineering Agent architecture engineered for the **[Google — The Gemma 4 Developer Agent Competition](https://www.kaggle.com/competitions/gemma-4-developer-agent)** on Kaggle (Deadline: **December 2, 2026**).
+Kaggle CLI checked on November 12, 2026; raw snapshot: `evidence/kaggle_submissions.csv`.
 
----
+| Configuration | Submission | Status | Public score |
+|---|---|---|---:|
+| v2, nine tools, temperature 0.2 | 58201114 | COMPLETE | 0.18 |
+| v3, six tools, temperature 0.4 | 58250000 | COMPLETE | 0.15 |
 
-## 🏛️ System Architecture
+**Best observed candidate: v2.** Its archived bundle is `artifacts/v2_submission.zip`; its contents are also available as `artifacts/v2_files.json`. v3 remains a reproducible experiment, not a demonstrated upgrade. Neither score is a prediction of private performance.
 
-```mermaid
-flowchart TD
-    Issue["📝 Issue Description / Bug Report"] --> Agent["🤖 Gemma Developer Agent Harness"]
-    
-    subgraph DiagnosticLoop ["Surgical Diagnostics & Fault Localization"]
-        Agent -->|"1. Extract Identifiers"| KW["Key Term / Symbol Indexer"]
-        KW -->|"2. Grep & Codebase Search"| Search["Code Search Toolkit (harness/tools.py)"]
-        Search -->|"3. Window Reading"| Context["Context Reader (Lines 1-200)"]
-    end
-    
-    subgraph PatchSynthesis ["Surgical Patch Synthesis & AST Safety"]
-        Context -->|"4. Synthesize Diff"| Gemma["Gemma Model (Reasoning & Code Infilling)"]
-        Gemma -->|"5. String Replacement"| AST["Python AST Syntax Validator"]
-        AST -->|"Rejects Malformed Syntax"| Retry["Self-Correction Loop"]
-        Retry --> Gemma
-        AST -->|"Syntax Valid"| TestRunner["6. Pytest Execution Sandbox"]
-    end
-    
-    TestRunner -->|"All Tests Passed"| GitDiff["7. Export Clean Git Diff (.patch)"]
+## Paper
+
+`paper/PAPER_WRITEUP.md` reports the negative result, measured prompt bytes and experimental limitations. The revised companion requires official task data, records its SHA-256, and compiles the v3 bundle with the official wheelhouse. It does not use fallback task summaries or claim measured tokens, GPU performance or statistical significance.
+
+Public companion: https://www.kaggle.com/code/akmalshahbaz/gemma-4-adk-kv-roofline-power-companion
+
+The paper track requires a Kaggle Writeup with title, subtitle, abstract, methods, experiments and citations, at most 3,000 words. Attach the public companion in Project Links. Saving a draft is insufficient: the Writeup must be submitted. The CLI's ordinary competition-submission list does not verify Writeup status.
+
+## Local verification
+
+Run from this directory with Python 3.12 and `pytest`, `PyYAML`, `numpy` installed:
+
+```sh
+python build_gemma_notebook.py
+python paper/build_paper_companion_nb.py
+python -m pytest -q tests
 ```
 
----
+Notebook builders check source generation; the companion's official-data audit and official compilation execute on Kaggle. Local tests cover diagnostic helpers and packaging, not autonomous repair quality. The local agent does not invoke a model or synthesize patches. Shell execution in the diagnostic toolkit is not sandboxed.
 
-## 🛠️ Components
-
-- [`harness/tools.py`](harness/tools.py): Safe execution boundary providing `list_files`, `read_file`, `search_code`, surgical `apply_patch` with Python AST pre-compilation checks, and sandboxed test execution.
-- [`harness/agent.py`](harness/agent.py): Multi-step agent orchestrator that coordinates keyword discovery, fault localization, and test verification.
-- [`tests/test_agent_harness.py`](tests/test_agent_harness.py): End-to-end pytest test suite (**5/5 passing**).
-
----
-
-## 🚀 How to Enter & Compete
-
-### Step 1: Accept Competition Rules
-Accept the official rules on the competition page:
-👉 **[kaggle.com/competitions/gemma-4-developer-agent/rules](https://www.kaggle.com/competitions/gemma-4-developer-agent/rules)**
-
-### Step 2: Run Verification Tests Locally
-```powershell
-pytest -v tests/
-```
-
-### Step 3: Push Baseline to Kaggle GPU
-```powershell
-Set-Location "kaggle_notebook"
-kaggle kernels push -p .
-```
+No final submission selection or paper Writeup submission is asserted by this README.

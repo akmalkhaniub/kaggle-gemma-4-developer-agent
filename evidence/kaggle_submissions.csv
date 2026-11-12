@@ -1,0 +1,6 @@
+ref,fileName,date,description,status,publicScore,privateScore
+
+58250000,submission.zip,2026-11-11 20:32:15.347000,v3 lean 6-tool 31B T=0.4 8m/28calls -37% prompt (no graph tools),SubmissionStatus.COMPLETE,0.15,
+
+58201114,submission.zip,2026-11-10 12:39:38.677000,v2 single Gemma-4-31B thinking-on 4096/8192 temp=0.2 7m/28calls contract-first,SubmissionStatus.COMPLETE,0.18,
+

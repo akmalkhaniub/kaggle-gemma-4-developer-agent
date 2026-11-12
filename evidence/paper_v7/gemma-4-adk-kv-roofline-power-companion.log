@@ -1,0 +1,59 @@
+[{"stream_name":"stderr","time":11.968453521,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":11.968528541,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":11.968533431000001,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":11.968535991,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":12.913404645,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":12.913447465,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":12.913451925,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":12.913455295,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":14.77090338,"data":"{\n"}
+,{"stream_name":"stdout","time":14.77094411,"data":"  \"tasks_path\": \"/kaggle/input/competitions/gemma-4-developer-agent/tasks.jsonl\",\n"}
+,{"stream_name":"stdout","time":14.77094756,"data":"  \"tasks_sha256\": \"e4b3fd60f69dbc2b9213e54eeb9636db78aefe92c1d06269d73d9f5f8f3c8ad6\",\n"}
+,{"stream_name":"stdout","time":14.77094996,"data":"  \"task_count\": 129,\n"}
+,{"stream_name":"stdout","time":14.77095213,"data":"  \"problem_bytes_quantiles\": [\n"}
+,{"stream_name":"stdout","time":14.77095413,"data":"    42.0,\n"}
+,{"stream_name":"stdout","time":14.770955990000001,"data":"    420.0,\n"}
+,{"stream_name":"stdout","time":14.77095781,"data":"    1806.2000000000003,\n"}
+,{"stream_name":"stdout","time":14.77096,"data":"    10100.0\n"}
+,{"stream_name":"stdout","time":14.77096188,"data":"  ]\n"}
+,{"stream_name":"stdout","time":14.77096373,"data":"}\n"}
+,{"stream_name":"stdout","time":14.791765666,"data":"[\n"}
+,{"stream_name":"stdout","time":14.791816986,"data":"  {\n"}
+,{"stream_name":"stdout","time":14.791821366,"data":"    \"variant\": \"v2\",\n"}
+,{"stream_name":"stdout","time":14.791825336,"data":"    \"prompt_template_bytes\": 5351,\n"}
+,{"stream_name":"stdout","time":14.791828576,"data":"    \"expanded_prompt_bytes_p50\": 5750.0,\n"}
+,{"stream_name":"stdout","time":14.791837006,"data":"    \"expanded_prompt_bytes_p90\": 7136.200000000001\n"}
+,{"stream_name":"stdout","time":14.791840726,"data":"  },\n"}
+,{"stream_name":"stdout","time":14.791843706,"data":"  {\n"}
+,{"stream_name":"stdout","time":14.791846896,"data":"    \"variant\": \"v3\",\n"}
+,{"stream_name":"stdout","time":14.791849846,"data":"    \"prompt_template_bytes\": 3340,\n"}
+,{"stream_name":"stdout","time":14.791872466000001,"data":"    \"expanded_prompt_bytes_p50\": 3739.0,\n"}
+,{"stream_name":"stdout","time":14.791878706,"data":"    \"expanded_prompt_bytes_p90\": 5125.200000000001\n"}
+,{"stream_name":"stdout","time":14.791882236,"data":"  }\n"}
+,{"stream_name":"stdout","time":14.791885116,"data":"]\n"}
+,{"stream_name":"stdout","time":14.791888026,"data":"Measured template byte reduction: 2011\n"}
+,{"stream_name":"stdout","time":14.791890976,"data":"No tokenizer or serialized tool-schema measurements are claimed.\n"}
+,{"stream_name":"stdout","time":14.831492787,"data":"Wrote agent.yaml               (325 bytes)\n"}
+,{"stream_name":"stdout","time":14.831532638,"data":"Wrote configs/sampling.yaml    (129 bytes)\n"}
+,{"stream_name":"stdout","time":14.831536958000001,"data":"Wrote eval_config.yaml         (94 bytes)\n"}
+,{"stream_name":"stdout","time":14.831562347,"data":"Wrote prompts/system.md        (3,340 bytes)\n"}
+,{"stream_name":"stdout","time":14.854038413,"data":"Schema OK: root=agent.yaml | files=4 | model=gemma-4-31b-it-qat-w4a16-ct\n"}
+,{"stream_name":"stderr","time":75.475841782,"data":"\u001b[92m11:08:11 - LiteLLM:WARNING\u001b[0m: get_model_cost_map.py:290 - LiteLLM: Failed to fetch remote model cost map from https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: [Errno -3] Temporary failure in name resolution. Falling back to local backup.\n"}
+,{"stream_name":"stderr","time":75.475890902,"data":"\n"}
+,{"stream_name":"stderr","time":75.475896932,"data":"\u001b[92m11:08:11 - LiteLLM:WARNING\u001b[0m: get_model_cost_map.py:290 - LiteLLM: Failed to fetch remote model cost map from https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: [Errno -3] Temporary failure in name resolution. Falling back to local backup.\n"}
+,{"stream_name":"stdout","time":83.060138239,"data":"validate_directory: PASSED\n"}
+,{"stream_name":"stdout","time":83.060181849,"data":"compile_submission: PASSED (root_agent='swe_agent', tools=6)\n"}
+,{"stream_name":"stdout","time":83.078507196,"data":"Submission ready: /kaggle/working/submission.zip (2,608 bytes) | SHA-256: 4029424ef9242aa53d0e32752b2f89c1064dd82b57d85b80145135426587496b\n"}
+,{"stream_name":"stdout","time":83.078547966,"data":"  agent.yaml\n"}
+,{"stream_name":"stdout","time":83.078554186,"data":"  configs/sampling.yaml\n"}
+,{"stream_name":"stdout","time":83.078559516,"data":"  eval_config.yaml\n"}
+,{"stream_name":"stdout","time":83.078564506,"data":"  prompts/system.md\n"}
+,{"stream_name":"stderr","time":89.020049225,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":89.020092924,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":89.23909228,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":89.23919088,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":90.121124662,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":90.194424927,"data":"[NbConvertApp] Writing 34498 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":92.994447761,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":93.524787414,"data":"[NbConvertApp] Writing 350180 bytes to __results__.html\n"}
+]
