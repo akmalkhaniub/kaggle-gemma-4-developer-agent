@@ -1,6 +1,6 @@
 ref,fileName,date,description,status,publicScore,privateScore
 
-58271330,submission.zip,2026-11-12 11:33:18.013000,Controlled v4: v2 unchanged except remove 3 unused graph tool declarations; T0.2 7m 28 calls,SubmissionStatus.PENDING,,
+58271330,submission.zip,2026-11-12 11:33:18.013000,Controlled v4: v2 unchanged except remove 3 unused graph tool declarations; T0.2 7m 28 calls,SubmissionStatus.COMPLETE,0.17,
 
 58250000,submission.zip,2026-11-11 20:32:15.347000,v3 lean 6-tool 31B T=0.4 8m/28calls -37% prompt (no graph tools),SubmissionStatus.COMPLETE,0.15,
 

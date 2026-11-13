@@ -6,11 +6,11 @@
       "agent.yaml"
     ],
     "sha256": "da33053fc47c61c1208c9b03f168ee4f65766d8a29d805dcf85020db4e1a2be6",
-    "status": "SubmissionStatus.PENDING",
+    "status": "SubmissionStatus.COMPLETE",
     "hypothesis": "Remove unused tool schemas",
     "unchanged": "All other bundle files byte-identical to v2",
     "submission_ref": "58271330",
-    "public_score": ""
+    "public_score": 0.17
   },
   {
     "variant": "v5_temperature_only",
@@ -23,5 +23,17 @@
     "hypothesis": "Reduce sampling variability",
     "unchanged": "All other bundle files byte-identical to v2",
     "submission_ref": null
+  },
+  {
+    "variant": "v6_restoration",
+    "control_submission": "58250000",
+    "changed_files": [
+      "prompts/system.md"
+    ],
+    "sha256": "3522c53cfbea6d629f8196349da8c365227f670da1b15315a9a242e90aedee6f",
+    "status": "SubmissionStatus.PENDING",
+    "hypothesis": "Restoring the guidance dropped by the v2->v3 compression (12 units: rationales, environment facts, heuristics) recovers part of the v2-v3 gap",
+    "unchanged": "All other bundle files byte-identical to v3 (6 tools, T=0.4, 8 min); U18/U19 not restored because v3 has no graph tools",
+    "submission_ref": "58319383"
   }
 ]
