@@ -1,13 +1,16 @@
-"""
-Developer Agent Toolset for Software Engineering Benchmarks (SWE-agent / Gemma-4 Developer Agent).
-Provides safe file inspection, grep/symbol search, patch application, and test execution.
+"""Local diagnostic toolkit used to inspect repositories during configuration work.
+
+This is NOT the competition's executing agent: submissions are declarative ADK
+bundles run by Kaggle's own tool implementations. Paths are confined to the
+workspace; commands are executed without a shell but are not otherwise sandboxed.
 """
 
-import ast
 import os
-import re
+import shlex
 import subprocess
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Sequence, Tuple, Union
+
+SKIP_DIRS = {".git", ".venv", "__pycache__", "node_modules", ".pytest_cache"}
 
 
 class AgentToolkit:
@@ -27,7 +30,7 @@ class AgentToolkit:
         target_dir = self._resolve_path(sub_dir)
         matches = []
         for root, dirs, files in os.walk(target_dir):
-            dirs[:] = [d for d in dirs if d not in {".git", ".venv", "__pycache__", "node_modules", ".pytest_cache"}]
+            dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
             for f in files:
                 rel = os.path.relpath(os.path.join(root, f), self.workspace_root).replace("\\", "/")
                 matches.append(rel)
@@ -47,14 +50,14 @@ class AgentToolkit:
             end = min(len(lines), end_line)
             numbered_lines = [f"{i}: {lines[i - 1]}" for i in range(start, end + 1)]
             return "".join(numbered_lines)
-        except Exception as e:
+        except OSError as e:
             return f"ERROR: {str(e)}"
 
-    def search_code(self, query: str, file_ext: str = ".py", max_results: int = 25) -> List[Dict[str, str]]:
-        """Fast regex/literal search across codebase."""
+    def search_code(self, query: str, file_ext: str = ".py", max_results: int = 25) -> List[Dict[str, object]]:
+        """Case-insensitive literal search across files with the given extension."""
         results = []
         for root, dirs, files in os.walk(self.workspace_root):
-            dirs[:] = [d for d in dirs if d not in {".git", ".venv", "__pycache__", "node_modules"}]
+            dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
             for f in files:
                 if f.endswith(file_ext):
                     path = os.path.join(root, f)
@@ -70,7 +73,7 @@ class AgentToolkit:
                                     })
                                     if len(results) >= max_results:
                                         return results
-                    except Exception:
+                    except OSError:
                         continue
         return results
 
@@ -102,15 +105,17 @@ class AgentToolkit:
             with open(abs_path, "w", encoding="utf-8") as f:
                 f.write(updated)
             return True, f"Successfully patched {file_path}"
-        except Exception as e:
+        except (OSError, UnicodeDecodeError, ValueError) as e:
             return False, f"Patch failed: {str(e)}"
 
-    def run_tests(self, test_cmd: str, timeout: int = 30) -> Dict[str, str]:
-        """Executes verification tests in workspace directory."""
+    def run_tests(self, test_cmd: Union[str, Sequence[str]], timeout: int = 30) -> Dict[str, object]:
+        """Runs a test command (argv list, or a string split with POSIX rules) without a shell."""
+        argv = shlex.split(test_cmd) if isinstance(test_cmd, str) else list(test_cmd)
+        if not argv:
+            return {"exit_code": -1, "stdout": "", "stderr": "empty command", "status": "ERROR"}
         try:
             res = subprocess.run(
-                test_cmd,
-                shell=True,
+                argv,
                 cwd=self.workspace_root,
                 capture_output=True,
                 text=True,
@@ -124,20 +129,19 @@ class AgentToolkit:
             }
         except subprocess.TimeoutExpired:
             return {"exit_code": -1, "stdout": "", "stderr": f"Test timed out after {timeout}s", "status": "TIMEOUT"}
-        except Exception as e:
+        except OSError as e:
             return {"exit_code": -1, "stdout": "", "stderr": str(e), "status": "ERROR"}
 
     def get_git_diff(self) -> str:
         """Emits git diff representation of current changes."""
         try:
             res = subprocess.run(
-                "git diff",
-                shell=True,
+                ["git", "diff"],
                 cwd=self.workspace_root,
                 capture_output=True,
                 text=True,
                 timeout=10
             )
             return res.stdout
-        except Exception as e:
-            return f"Error retrieving git diff: {str(e)}"
+        except (OSError, subprocess.TimeoutExpired) as e:
+            return f"Error retrieving git diff: {e}"

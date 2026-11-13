@@ -1,11 +1,9 @@
-﻿"""Builds the v3 Kaggle notebook for Gemma 4 Developer Agent.
+"""Builds the Kaggle notebook that reproduces the v3 bundle (not the best observed configuration).
 
-Packages our verified 6-tool declarative ADK bundle (thinking ON, temperature=0.4,
-8,192 max output tokens, 8-min / 28-call / 240s per-task budget, single agent
-without dummy LoRA adapters, tightened ~3.1k-char call-paced prompt, and graph
-tools removed from agent.yaml), validates it against the official attached
-wheelhouse (`adk_submission` + `swegemma`), renders configuration/budget diagnostic
-visualizations, and emits a files-only `/kaggle/working/submission.zip`.
+The notebook materialises the six-tool v3 bundle (temperature 0.4, 8-minute and
+28-call budget, 3,340-byte prompt), validates and compiles it with the official
+wheelhouse (`adk_submission` + `swegemma`), and writes a files-only
+`/kaggle/working/submission.zip`. Compilation checks compatibility only.
 """
 
 import json

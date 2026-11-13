@@ -1,74 +1,41 @@
-"""
-Autonomous Developer Agent Engine for Gemma-4 Developer Agent Competition.
-Implements multi-step planning, tool orchestration, AST verification, and patch generation.
+"""Offline issue locator used while designing prompts.
+
+It extracts identifiers from an issue description and lists the workspace files
+that mention them. It does not call a model, plan, or write patches; the
+competition agent is the declarative ADK bundle executed by Kaggle.
 """
 
-import json
-import os
 import re
 from typing import Any, Dict, List, Optional
+
 from harness.tools import AgentToolkit
 
+STOP_WORDS = {"this", "that", "with", "from", "when", "error", "issue", "problem", "function", "class"}
 
-class GemmaDeveloperAgent:
-    """Offline diagnostic helper. Does not invoke a model or synthesize patches."""
 
-    def __init__(self, workspace_root: str, model_name: str = "google/gemma-2-9b-it", max_steps: int = 8):
+class IssueLocator:
+    """Maps an issue description to candidate files by literal identifier search."""
+
+    def __init__(self, workspace_root: str, max_keywords: int = 4, max_files: int = 3):
         self.toolkit = AgentToolkit(workspace_root)
-        self.model_name = model_name
-        self.max_steps = max_steps
-        self.trajectory: List[Dict[str, Any]] = []
+        self.max_keywords = max_keywords
+        self.max_files = max_files
 
-    def solve_issue(self, issue_description: str, test_cmd: Optional[str] = None) -> Dict[str, Any]:
-        """Locates relevant files for diagnostics; does not repair the issue."""
-        self.trajectory = []
-        state = {
-            "status": "ANALYZING",
-            "issue": issue_description,
-            "target_files": [],
-            "candidate_patches": [],
-            "test_results": None,
-            "diff": "",
-            "resolved": False
+    def locate(self, issue_description: str, test_cmd: Optional[str] = None) -> Dict[str, Any]:
+        keywords = extract_keywords(issue_description)
+        hits = [hit for kw in keywords[: self.max_keywords] for hit in self.toolkit.search_code(kw)]
+        files = list(dict.fromkeys(hit["file"] for hit in hits))
+        report: Dict[str, Any] = {
+            "extracted_keywords": keywords,
+            "target_files": files,
+            "file_previews": {f: self.toolkit.read_file(f, 1, 150) for f in files[: self.max_files]},
         }
-
-        # Step 1: Entity Extraction & Keyword Search
-        keywords = self._extract_keywords(issue_description)
-        state["extracted_keywords"] = keywords
-
-        search_hits = []
-        for kw in keywords[:4]:
-            hits = self.toolkit.search_code(kw)
-            search_hits.extend(hits)
-
-        # Deduplicate hit files
-        matched_files = list(dict.fromkeys([h["file"] for h in search_hits]))
-        state["target_files"] = matched_files
-
-        # Step 2: Context Inspection
-        file_contexts = {}
-        for f in matched_files[:3]:
-            file_contexts[f] = self.toolkit.read_file(f, 1, 150)
-
-        # Step 3: Run baseline test before patch
-        baseline_test = None
         if test_cmd:
-            baseline_test = self.toolkit.run_tests(test_cmd)
-            state["baseline_test"] = baseline_test
+            report["baseline_test"] = self.toolkit.run_tests(test_cmd)
+        return report
 
-        # Step 4: Patch Synthesis Strategy
-        # When plugged into live HuggingFace/Kaggle Gemma model, uses model.generate()
-        # Fallback heuristic: search for the error pattern and apply fix
-        state["trajectory"] = self.trajectory
-        state["diff"] = self.toolkit.get_git_diff()
-        state["status"] = "PATCH_PROPOSED" if state["diff"] else "INVESTIGATION_COMPLETE"
 
-        return state
-
-    def _extract_keywords(self, text: str) -> List[str]:
-        """Extracts technical identifiers, function names, and exception types from prompt."""
-        # Regex for CamelCase or snake_case identifiers
-        identifiers = re.findall(r"\b[A-Za-z_][A-Za-z0-9_]{3,}\b", text)
-        stop_words = {"this", "that", "with", "from", "when", "error", "issue", "problem", "function", "class"}
-        filtered = [ident for ident in identifiers if ident.lower() not in stop_words]
-        return list(dict.fromkeys(filtered))[:10]
+def extract_keywords(text: str, limit: int = 10) -> List[str]:
+    """Identifier-like tokens of length >= 4, in order of first appearance, minus stop words."""
+    identifiers = re.findall(r"\b[A-Za-z_][A-Za-z0-9_]{3,}\b", text)
+    return list(dict.fromkeys(i for i in identifiers if i.lower() not in STOP_WORDS))[:limit]

@@ -82,6 +82,15 @@ thinking_config:
 }
 
 
+class BundleError(ValueError):
+    """Raised when a bundle violates the competition's submission contract."""
+
+
+def _require(condition: object, message: str) -> None:
+    if not condition:
+        raise BundleError(message)
+
+
 def _safe_yaml_load(text: str) -> dict:
     class _IncludeLoader(yaml.SafeLoader):
         pass
@@ -104,15 +113,15 @@ def validate_submission_bundle(bundle_dir: Path) -> Set[str]:
     """Validates directory layout, YAML includes, single allowed model, and ADK template safety."""
     bundle_dir = Path(bundle_dir)
     files = sorted(p for p in bundle_dir.rglob("*") if p.is_file())
-    assert files, "bundle contains no files"
-    assert not any(p.is_symlink() for p in bundle_dir.rglob("*")), "symlinks are rejected"
+    _require(files, "bundle contains no files")
+    _require(not any(p.is_symlink() for p in bundle_dir.rglob("*")), "symlinks are rejected")
 
     roots = [name for name in ROOT_CONFIGS if (bundle_dir / name).is_file()]
-    assert len(roots) == 1, f"expected exactly 1 root config, found {roots}"
+    _require(len(roots) == 1, f"expected exactly 1 root config, found {roots}")
 
     bad_suffixes = [p.name for p in files if p.suffix not in ALLOWED_SUFFIXES]
-    assert not bad_suffixes, f"disallowed file suffixes: {bad_suffixes}"
-    assert sum(p.stat().st_size for p in files) < MAX_UNPACKED_BYTES, "bundle exceeds 3 GiB unpacked"
+    _require(not bad_suffixes, f"disallowed file suffixes: {bad_suffixes}")
+    _require(sum(p.stat().st_size for p in files) < MAX_UNPACKED_BYTES, "bundle exceeds 3 GiB unpacked")
 
     declared_models: Set[str] = set()
     for cfg in (p for p in files if p.suffix in (".yaml", ".yml")):
@@ -120,21 +129,21 @@ def validate_submission_bundle(bundle_dir: Path) -> Set[str]:
         data = _safe_yaml_load(raw_text)
         for inc_rel in re.findall(r"!include\s+(\S+)", raw_text):
             inc_path = (cfg.parent / inc_rel).resolve()
-            assert bundle_dir.resolve() in inc_path.parents, f"include traversal outside root: {inc_rel}"
-            assert inc_path.is_file(), f"{cfg.name}: missing !include target {inc_rel}"
-        assert "adapter" not in data, f"{cfg.name}: adapter key unexpectedly set"
+            _require(bundle_dir.resolve() in inc_path.parents, f"include traversal outside root: {inc_rel}")
+            _require(inc_path.is_file(), f"{cfg.name}: missing !include target {inc_rel}")
+        _require("adapter" not in data, f"{cfg.name}: adapter key unexpectedly set")
         if "model" in data:
             declared_models.add(str(data["model"]).strip())
 
-    assert len(declared_models) == 1, f"single model rule failed: {declared_models}"
+    _require(len(declared_models) == 1, f"single model rule failed: {declared_models}")
     model = next(iter(declared_models))
-    assert model in ALLOWED_MODELS, f"model {model!r} not in {ALLOWED_MODELS}"
+    _require(model in ALLOWED_MODELS, f"model {model!r} not in {ALLOWED_MODELS}")
 
     for md_path in (p for p in files if p.suffix in (".md", ".txt")):
         txt = md_path.read_text(encoding="utf-8")
         placeholders = set(re.findall(r"\{([^}]*)\}", txt))
         unknown = placeholders - ALLOWED_STATE_VARS
-        assert not unknown, f"{md_path.name}: unrecognised ADK state template placeholders: {unknown}"
+        _require(not unknown, f"{md_path.name}: unrecognised ADK state template placeholders: {unknown}")
 
     return declared_models
 
@@ -153,8 +162,8 @@ def build_submission_zip(bundle_dir: Path, zip_path: Path) -> Path:
             zf.writestr(info, p.read_bytes())
 
     with zipfile.ZipFile(zip_path, "r") as zf:
-        assert zf.testzip() is None, "zip CRC integrity check failed"
+        _require(zf.testzip() is None, "zip CRC integrity check failed")
         names = zf.namelist()
-        assert "agent.yaml" in names, "agent.yaml must sit at archive root"
-        assert not any(n.endswith("/") for n in names), "directory entries are disallowed"
+        _require("agent.yaml" in names, "agent.yaml must sit at archive root")
+        _require(not any(n.endswith("/") for n in names), "directory entries are disallowed")
     return zip_path
