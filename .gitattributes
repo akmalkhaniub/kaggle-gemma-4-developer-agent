@@ -1,0 +1,3 @@
+# Submitted bundles are identified by exact bytes; never convert line endings.
+experiments/** -text
+artifacts/** -text
