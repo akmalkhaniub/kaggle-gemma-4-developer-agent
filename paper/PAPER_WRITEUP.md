@@ -1,89 +1,141 @@
-# Smaller Prompts Are Not Enough: A Reproducible Negative Result for a Gemma 4 Developer Agent
+# What Prompt Compression Removes: Auditing a Gemma 4 Software Agent
 
-**Subtitle:** Configuration compression, public-score regression, and limits of causal attribution
+**Subtitle:** Why a shorter system prompt is not evidence of a better agent, and what two leaderboard scores can resolve
 
 **Author:** Akmal Shahbaz
 
-**Public reproducibility notebook:** https://www.kaggle.com/code/akmalshahbaz/gemma-4-adk-kv-roofline-power-companion
+**Companion notebook (version 10):** https://www.kaggle.com/code/akmalshahbaz/gemma-4-adk-kv-roofline-power-companion (the URL keeps an earlier working title)
 
 ## Abstract
 
-We compare two declarative Gemma 4 developer-agent configurations evaluated by Kaggle. The baseline v2 scored 0.18; the revised v3 scored 0.15. Both results were verified as COMPLETE through the authenticated Kaggle CLI on November 12, 2026. The revision shortened the system-prompt template from 5,351 to 3,340 UTF-8 bytes and reduced declared tools from nine to six, while also changing sampling temperature and time budget. Despite a 37.58% reduction in prompt-template bytes, the observed public score fell by 0.03. We release the configuration artifacts and a CPU notebook that audits official development data, measures expanded prompt bytes, and validates the v3 bundle with the official compiler. This is a negative configuration result, not evidence that prompt compression itself reduces repair quality. Our contribution is an auditable account of why smaller configuration artifacts should not be mistaken for improved software-engineering performance.
+In the Gemma 4 Developer Agent competition the model and agent loop are fixed, so the system prompt is the main design surface, and shortening it is a common move. We made our agent's prompt 37.6% shorter, with three smaller changes, and its public score fell from 0.18 to 0.15. Rather than explain the drop, we ask what the compression removed and what two scores can resolve. An audit of 51 guidance units shows that nearly all directives survived (29 of 34) but many rationales did not (6 of 8 by our labels, 3 to 4 of 8 by an independent second rater), along with four repair heuristics; rationales were dropped roughly three to six times as often as directives under every labelling we tried. Assuming pass/fail grading, the score gap is one to four tasks, within documented run-to-run variation for software agents, so the data cannot show that compression caused the drop. We treat the audit as a hypothesis, specify the experiment that would test it, and release code that regenerates every figure. Prompt compression should be described by what it removes, not only by how much, and judged with repeated, controlled runs.
 
 ## 1. Introduction
 
-Software repair requires more than locating a relevant symbol. An agent must interpret a behavioral contract, inspect related implementations, produce a patch, and verify it within a limited execution budget. Reducing instruction length and tool declarations is attractive because it may leave more context for repository evidence. However, smaller prompts can also omit useful instructions, and removing tools can discard useful capabilities.
+Repository-level software repair asks a language-model agent to read an issue, locate the relevant code, edit it and verify the edit within a fixed budget of tool calls and time [3, 4]. In the Gemma 4 Developer Agent competition [1] the organisers fix the model, inference stack and agent loop; participants submit a declarative bundle with the agent's tools, sampling parameters, budgets and a system prompt. Without an optional LoRA adapter, the prompt and tool list are the main levers. This report is a submission to the competition's paper track [2].
 
-The Gemma 4 Developer Agent competition evaluates submitted patches against validation tests [1]. Our experiment asks a narrow question: did our combined configuration simplification improve the observed competition score? The answer for these two runs is no. This report distinguishes directly measured artifact properties from model-runtime hypotheses and avoids inferring hidden task outcomes from rounded aggregate scores.
+Shortening the prompt is a natural move. It leaves more context for file contents and test output, and recent work suggests that a moderate share of instruction text can be removed with little loss, although reliability degrades under heavier compression [6, 7, 8]. Our v2 configuration used a detailed prompt. v3 rewrote it to be substantially shorter, removed three tool declarations the prompt already told the model not to use, raised the temperature and added a minute to the time budget. It scored lower.
 
-## 2. Methods and artifacts
+A lower score invites a quick explanation, such as that the prompt became too terse. That is premature, as is the opposite claim that the change was noise. Both skip a prior question: what did the rewrite take out? Compression is usually described by how much text it saves; we describe it by what it removes. We contribute an instruction-level audit of the rewrite with a robustness analysis of its labels, a bound on what two rounded leaderboard scores can resolve, and a separation of measured facts from hypotheses together with the experiment that would test the leading one.
 
-Both configurations declare the Gemma 4 31B quantized instruction model and use no LoRA adapter. The submitted agent is a declarative ADK bundle containing a root agent configuration, sampling configuration, evaluation configuration and system prompt. Local Python diagnostic helpers are not the competition's executing agent and do not demonstrate autonomous repair.
+## 2. Related Work
 
-| Property | v2 | v3 |
-|---|---:|---:|
-| Submission reference | 58201114 | 58250000 |
-| Public score | 0.18 | 0.15 |
-| Status verified November 12 | COMPLETE | COMPLETE |
-| System-prompt template bytes | 5,351 | 3,340 |
-| Declared tools | 9 | 6 |
-| Temperature | 0.2 | 0.4 |
-| Task time budget | 7 minutes | 8 minutes |
-| Tool-call budget | 28 | 28 |
+**Software-engineering agents.** SWE-bench [3] established evaluation on real GitHub issues judged by tests. SWE-agent [4] showed that the agent–computer interface, meaning the tools given and how output is presented, strongly affects resolution rates, and SWE-smith [5] scaled training environments for such agents.
 
-The v3 tool list retains command execution, file reading, file editing, file writing, status inspection and patch submission. The prompt emphasizes source-only changes, temporary scratch files, targeted checks, and an early transition from inspection to editing. These are instructions to the model, not mechanically enforced state transitions.
+**Prompt and context compression.** LLMLingua-2 [6] learns which prompt tokens can be dropped while preserving task performance. Hou and Yang [7] compress the control context of tool-using agents, the system-side text specifying tools and policies, and find that success stays near the full-context baseline when most context is retained but diverges sharply under stronger compression, with failures mainly in tool execution and action parsing. Gao et al. [8] compress skill descriptions for coding agents and report that removing non-essential content can improve results. These studies measure how much text can be removed; we ask what kind a hand-written compression removed. The kind may matter: explanations attached to examples can improve large models [10], and models are sensitive to small changes in prompt wording and format [9].
 
-Several variables changed together. Accordingly, this is a comparison of two complete configurations, not a controlled factorial solve-rate experiment. The archived v2 ZIP and embedded v2/v3 file dictionaries preserve the configurations for subsequent controlled studies.
+**Variance in agent evaluation.** Miller [11] argues that evaluations should report standard errors and account for sampling variability. Bjarnason et al. [12] ran tens of thousands of agent trajectories on SWE-bench Verified and found single-run scores differing by several points depending on which run is chosen, even at temperature zero, so that reported gains of two to three points may be noise. Our observed difference is of that size.
 
-## 3. Reproducibility protocol
+## 3. Experimental Setup
 
-The public CPU companion requires the official development-task file and wheelhouse. It fails if the task file is absent or ambiguous; it does not substitute synthetic tasks or hard-coded summary rows. It records the input SHA-256, task count, problem-length quantiles, prompt-template byte counts and expanded-prompt byte quantiles in an output JSON report.
+**Competition setting.** All configurations use the competition's quantised Gemma 4 31B instruction-tuned model without an adapter. For each hidden issue the runner executes the agent in an offline container and grades the resulting working-tree diff against hidden tests [1]. The leaderboard reports one score per submission, with no per-task outcomes.
 
-Prompt sizes are computed with UTF-8 encoding. Expanded prompts replace the problem-description placeholder with each official problem statement. These measurements exclude serialized tool schemas, chat-template overhead, reasoning traces and tool outputs. They are therefore not measurements of complete runtime context occupancy. We make no token-count claim and use no fixed characters-per-token conversion.
+**Configurations.** Table 1 lists four configurations: v2 (control), v3 (compressed revision), and v4 and v5, one-factor variants of v2 prepared to separate what v3 bundled. All share the same tool-call, output-length and thinking budgets. The three tools removed in v3 and v4 provide code-graph navigation and similarity search; the v2 prompt already forbade them because the graphs omit asynchronous code.
 
-The notebook also constructs the v3 bundle, validates its directory with the official submission package, compiles the configuration and emits a deterministic files-only ZIP with its SHA-256. Compilation uses tool signature stubs and a non-serving model endpoint. It checks compatibility without executing inference; it cannot certify patch quality or reproduce a leaderboard score.
+**Table 1. Configurations and leaderboard outcomes.**
 
-The historical score snapshot was collected through the authenticated competition-submissions API. The offline notebook labels those scores as historical observations rather than pretending to retrieve fresh results. The compiler run and development-data audit are separate from the competition's hidden evaluation.
+| Configuration | Difference from v2 | Prompt size | Public score |
+|---|---|---|---|
+| v2 (control) | — | 5,351 bytes | 0.18 |
+| v3 | Prompt rewritten; three graph tools removed; temperature 0.2 → 0.4; time budget 7 → 8 minutes | 3,340 bytes | 0.15 |
+| v4 | Three graph-tool declarations removed only | 5,351 bytes | Pending |
+| v5 | Temperature 0.2 → 0.0 only | 5,351 bytes | Not yet evaluated |
 
-## 4. Results
+## 4. Methodology
 
-The revised companion completed on Kaggle CPU as version 7 on November 12, 2026. It audited 129 official development tasks (median problem length 420 bytes; P90 1,806.2 bytes). Expanded system prompts had medians of 5,750 bytes for v2 and 3,739 bytes for v3. Both official directory validation and compilation passed for v3. The emitted ZIP was 2,608 bytes, SHA-256 `4029424ef9242aa53d0e32752b2f89c1064dd82b57d85b80145135426587496b`. This rerun performed no model inference.
+**Development data and prompt measurement.** The competition provides 129 public development tasks. Our notebook loads the official task file, records its checksum and measures each assembled prompt, with the problem statement inserted, in UTF-8 bytes. We did not run the tokenizer, and the measurement excludes tool schemas, reasoning and tool output.
 
+**Instruction-level audit.** We divided the v2 prompt into 51 guidance units, each expressing one idea, and classified each as a directive (what to do or avoid), a rationale (why a directive exists), an environment fact (a property of the sandbox or tools) or an example. Each unit carries a verbatim quotation from v2 and, if the guidance survives, one from v3; the code fails if any quotation is absent from the submitted prompts. The segmentation and labels were drafted with an AI assistant, so they are a documented judgement, not a validated measurement. To check them, a second AI model labelled the same units blind: it saw only the two prompts, the category definitions and our verbatim v2 excerpts, never our labels, and judged each unit's kind and whether its idea survives in v3. We also recomputed the contrast between rationales and directives under labellings that a different rater could defend: counting as rationales three environment facts that also explain a nearby rule, counting as retained two units that v3 keeps in part, doing both, and excluding guidance about the removed graph tools, which became moot rather than lost.
 
-The v3 prompt template is 2,011 bytes smaller, a 37.58% reduction relative to v2. Three tool declarations were removed. The public evaluation nevertheless decreased from 0.18 to 0.15, an absolute difference of -0.03. We retain v2 as the best observed configuration in this comparison.
+**Score-resolution analysis.** The leaderboard shows two decimal places and does not publish the number of evaluated tasks. Assuming each task is graded pass or fail and scores are rounded pass rates, we enumerate the evaluation sizes at which both observed scores can occur and the task gap each implies. We also compute how large an evaluation must be for a difference this size between two independent runs to exceed two standard errors [11]. A paired comparison would need per-task outcomes, which we lack.
 
-The result does not establish that the removed tools were necessary, that temperature caused the decrease, or that prompt compression is harmful. Those explanations require controlled interventions. Nor does the absence of repeated runs establish that the configurations are equivalent. We do not present a significance test: paired per-task outcomes and a justified variance model are unavailable.
+**Configuration validity.** The notebook compiles v3 with the official submission package without running a model, which shows only that it is well-formed; our tests check the bundle rules for all four configurations.
 
-An earlier analysis estimated schema tokens, compaction delays and rank-reversal probabilities. Those claims are withdrawn from this report because approximated schema sizes, assumed output growth and assumed task correlation do not constitute runtime measurements. A single-GPU bandwidth model is also omitted because it does not directly measure the competition runner's behavior.
+## 5. Results
 
-## 5. Related work and context
+### 5.1 Leaderboard outcome
 
-The official competition defines the declarative submission interface and pass/fail patch evaluation [1]. The companion uses its supplied submission packages for configuration validation. SWE-bench introduced evaluation of language models on repository-level software issues [3]; its distinction between plausible patches and test-validated resolutions motivates our separation of compilation checks from repair outcomes. The Gemma 4 paper track permits reports describing competition approaches and related research [2]. Our contribution is limited to an auditable configuration case study rather than a new model, training method or benchmark.
+v2 scored 0.18 and v3 scored 0.15 on the public leaderboard. Because v3 changed four things at once and each configuration was evaluated once, these scores do not identify which change, if any, caused the difference. We retain v2.
 
-## 6. Limitations and next experiments
+### 5.2 What the compression removed
 
-Only one public evaluation is available for each configuration. Multiple settings changed together, private scores are unavailable, and the public development-task distribution need not represent hidden evaluation tasks. Byte reductions cannot establish reduced GPU latency, delayed compaction or increased task success.
+Across the 129 development tasks the median assembled prompt shrank from 5,750 to 3,739 bytes. Figure 1(a) shows that most of the saving came from the two longest sections, the procedure and the hard limits; Figure 1(b) shows what was inside them.
 
-A next experiment should hold the v2 sampling, time budget and prompt fixed while changing only the tool set, followed by a separate prompt-only intervention. Such experiments should preserve artifact hashes and all available per-task outcomes. Repeated measurements should be reported when evaluation budget permits. Until those results exist, replacing v2 with v3 would trade a better observed public result for an unverified hypothesis.
+![Figure 1](figures/fig1_prompt_audit.png)
 
-## 6a. Prospective controlled follow-up (November 12, 2026)
+**Figure 1.** (a) Prompt size by section; the v3 "workflow" section corresponds to the v2 "procedure" section. (b) The 51 guidance units of v2, coloured by kind. Solid squares survive in v3; hatched squares are absent from it.
 
-To separate tool-declaration overhead from the earlier bundled changes, we submitted v4 (reference 58271330). It differs from the archived v2 only in agent.yaml: three graph-tool declarations are removed. The full v2 prompt, temperature 0.2, seven-minute limit and 28-call budget are retained byte-for-byte. The prompt already prohibits use of those three tools in v2; this intervention tests the effect of their declarations while retaining that instruction. The candidate ZIP SHA-256 is da33053fc47c61c1208c9b03f168ee4f65766d8a29d805dcf85020db4e1a2be6.
+By our labels, directives were largely preserved (29 of 34 survive) while rationales were largely removed (only 2 of 8 survive). The removed rationales said that the hidden tests were written from the issue text, that an edit left on disk is graded even without a submission, that test files are reset before grading, that a plain diff hides new files, and that test output should be read from the end because the verdict is printed last. A sixth, explaining why the graph tools were banned, became moot.
 
-The comparison uses the historical v2 evaluation, not a fresh randomized paired control. A single score difference cannot distinguish an intervention effect from run variability. We predefine success operationally as exceeding the observed v2 score of 0.18; ties do not justify replacing the baseline. The result remains pending and is not counted as an improvement.
+The last case shows the pattern. v2 told the model that command output is truncated to its first 5,000 characters while pytest prints its verdict at the end, and to save test output to a file and read only its tail. v3 keeps the truncation fact and the tail instruction but drops the sentence connecting them. A model following v3 usually does the right thing; a model facing an unfamiliar tool no longer has the reason in front of it.
 
-A second independently prepared variant changes only v2 temperature from 0.2 to 0.0. Kaggle rejected its submission after reporting zero remaining daily submissions, so it has no evaluation result. Neither the rejected variant nor compilation checks are counted as performance experiments.
+Five directives were also removed: the moot graph-tool ban and four repair heuristics, namely to create new files only when a new module is needed, to fix the root cause, to judge success by the tests covering the modified code, and to edit where wrong behaviour is produced rather than observed.
 
-<!-- latest-controlled-status -->
-Latest authenticated status check (2026-11-12T17:10:01+05:00): v4 remains PENDING with no public score; v2 remains 0.18. The quota endpoint reports one submission today and zero remaining, so v5 has not been resubmitted. No controlled performance conclusion is available.
-<!-- /latest-controlled-status -->
+### 5.3 Robustness of the audit
 
-## 7. Conclusion
+The counts depend on our labels, but the direction does not. Across the four alternative labellings of Section 4, 5 to 6 rationales were dropped out of 7 to 11, and 4 to 5 directives out of 33 to 34, so rationales were dropped roughly four to six times as often as directives.
 
-Our compressed configuration was smaller but scored lower in its observed evaluation. Reliable submission engineering requires recording that result plainly. The released audit separates artifact measurements, official configuration checks and actual repair outcomes so that future improvements can be assessed against evidence.
+The independent second rater agreed with our unit labels on 47 of 51 units (Cohen's kappa 0.84) and with our judgement of which units v3 dropped on 49 to 51, depending on how partly retained units are counted. All four label disagreements fall on the boundary between rationales and environment facts. Under its labels, 3 to 4 of 8 rationales were dropped against 5 of 34 directives, a ratio of roughly three rather than five. It flagged eight further fragments, but seven are present in v3 and one duplicates a labelled unit, so none changes the rationale counts. The audit therefore supports a qualitative statement, that this rewrite removed explanations considerably more readily than instructions, not a precise rate.
+
+### 5.4 What two scores can resolve
+
+![Figure 2](figures/fig2_score_resolution.png)
+
+**Figure 2.** For every evaluation size at which both observed scores are possible under pass/fail grading, the range of task-count differences between v2 and v3.
+
+If the public evaluation is no larger than the 129-task development set, the two scores differ by between one and four tasks, and the evaluation would need well over a thousand tasks for a gap this size between independent runs to exceed two standard errors. Some sizes are ruled out: no pass count out of 58 tasks rounds to 0.18, contradicting the 58-task public split assumed in an earlier draft. Since Bjarnason et al. [12] report single-run variation of several points, a three-point gap between single runs is within what randomness alone can produce. We did not measure our own run-to-run variance, so we cannot say how much of the gap it explains.
+
+### 5.5 Controlled follow-up
+
+v4 is v2 minus the three unused tool declarations; we decided in advance that it would replace v2 only if it scored strictly higher, though a higher score would be weak evidence. v5 (temperature only) could not be evaluated because of the daily submission limit, and v4 was still pending at our last check, so we make no claim about either.
+
+## 6. Discussion
+
+The scores cannot show that compression hurt, and the audit cannot show that the removed text mattered. Together they establish that the rewrite was a specific intervention, one that removed reasons and several heuristics while leaving instructions largely intact, and that the single observation it produced is too coarse to judge it.
+
+A plausible mechanism is that rationales help a model apply a rule to cases it did not anticipate, as an agent must in an unfamiliar repository. This is a hypothesis: explanations help large models in few-shot settings [10], but we have no evidence for instructions in a system prompt, and the dropped heuristics, the higher temperature or the extra time could equally explain the drop. Table 2 summarises the evidence.
+
+**Table 2. Status of claims and what would settle them.**
+
+| Status | Claim | What would settle it |
+|---|---|---|
+| Measured | Prompt sizes; which guidance units the rewrite removed; the labels' sensitivity and second-rater agreement | — |
+| Verified | Both scores; v3 compiles; v4 and v5 each change one file | — |
+| Derived from an assumption | The gap is one to four tasks for evaluations up to 129 tasks | Per-task outcomes |
+| Hypothesis | Removing rationales and repair heuristics lowered repair quality | Restore them to v3; repeated runs |
+| Hypothesis | The higher temperature made v3 less reliable | v5; repeated runs of v2 |
+| Hypothesis | Declaring unused tools costs performance | v4; repeated runs of v2 |
+| Withdrawn | Token-level savings; memory and compaction effects; public–private rank-reversal probabilities | Tokenizer measurement; runner-level traces; a valid task split |
+
+The decisive experiment is simple: restore the removed rationales and heuristics to v3, change nothing else, and evaluate v2, v3 and the restored variant several times each, comparing task by task where outcomes are available [11]. If the restored variant recovers most of the gap, the audit found something that matters; if not, the tool, temperature and time changes become the main suspects, and v4 and v5 are prepared to test them one at a time. We will report the result either way. The method is not specific to our prompt: any rewrite of a system prompt, skill file or tool description can be audited unit by unit and relabelled by a second rater.
+
+## 7. Limitations
+
+Each configuration was evaluated once, private scores and per-task outcomes are unavailable, and v3 changed four factors together. The audit labels were drafted with an AI assistant and checked only by a second AI model, which labelled our segmentation rather than producing its own; no human has checked them, and Section 5.3 bounds that dependence without removing it. The audit covers one prompt and one model and may not generalise. The score analysis assumes pass/fail grading, and the development tasks may not resemble the hidden ones. We measured bytes, not tokens, and ran no inference, so we make no latency, memory or compaction claims.
+
+## 8. Conclusion
+
+A substantially shorter system prompt, introduced with three other changes, was followed by a slightly lower leaderboard score. The compression removed mainly explanations and a few repair heuristics while keeping nearly every instruction, a pattern that holds under every labelling we tried, including a second rater's, though its strength varies, and the score difference amounts to a few tasks, within what randomness can produce. Prompt revisions should be described by what they remove as well as by how much, and judged by repeated, controlled evaluation. We keep v2 and release our code so the restoration experiment can be run and checked.
+
+## Reproducibility Statement
+
+The public companion notebook contains the v2 and v3 configurations and the analysis code, and reproduces the measurements, the audit with its sensitivity analysis, the score analysis, both figures and the official v3 compilation on Kaggle CPU. Our repository, which also holds the second rater's labels and the agreement analysis and runs the test suite, is available on request.
+
+## AI Assistance
+
+An AI assistant (Claude) helped write the analysis code, draft the instruction labels and draft the text of this paper; a second Claude model provided the independent labelling. All reported numbers were regenerated from the archived configurations and checked against the Kaggle outputs.
 
 ## References
 
-1. Google DeepMind and Kaggle. The Gemma 4 Developer Agent Competition. https://www.kaggle.com/competitions/gemma-4-developer-agent
-2. Google DeepMind and Kaggle. The Gemma 4 Developer Agent Paper Track. https://www.kaggle.com/competitions/gemma-4-developer-agent-paper
-3. Jimenez et al. SWE-bench: Can Language Models Resolve Real-World GitHub Issues? ICLR 2024. https://arxiv.org/abs/2310.06770
+1. Google DeepMind and Kaggle. The Gemma 4 Developer Agent Competition, 2026. https://www.kaggle.com/competitions/gemma-4-developer-agent
+2. Google DeepMind and Kaggle. The Gemma 4 Developer Agent Paper Track, 2026. https://www.kaggle.com/competitions/gemma-4-developer-agent-paper
+3. C. E. Jimenez et al. SWE-bench: Can Language Models Resolve Real-World GitHub Issues? ICLR 2024. https://arxiv.org/abs/2310.06770
+4. J. Yang et al. SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering. NeurIPS 2024. https://arxiv.org/abs/2405.15793
+5. J. Yang et al. SWE-smith: Scaling Data for Software Engineering Agents. NeurIPS 2025. https://arxiv.org/abs/2504.21798
+6. Z. Pan et al. LLMLingua-2: Data Distillation for Efficient and Faithful Task-Agnostic Prompt Compression. arXiv:2403.12968, 2024. https://arxiv.org/abs/2403.12968
+7. Y. Hou and Z. Yang. Control Under Compression: Reliability Frontiers for Tool-Using Agents. arXiv:2608.01056, 2026. https://arxiv.org/abs/2608.01056
+8. Y. Gao et al. SkillReducer: Optimizing LLM Agent Skills for Token Efficiency. arXiv:2603.29919, 2026. https://arxiv.org/abs/2603.29919
+9. M. Sclar et al. Quantifying Language Models' Sensitivity to Spurious Features in Prompt Design. ICLR 2024. https://arxiv.org/abs/2310.11324
+10. A. K. Lampinen et al. Can Language Models Learn from Explanations in Context? Findings of EMNLP 2022. https://arxiv.org/abs/2204.02329
+11. E. Miller. Adding Error Bars to Evals: A Statistical Approach to Language Model Evaluations. arXiv:2411.00640, 2024. https://arxiv.org/abs/2411.00640
+12. B. H. Bjarnason, A. Silva and M. Monperrus. On Randomness in Agentic Evals. ICLR 2026. https://arxiv.org/abs/2602.07150

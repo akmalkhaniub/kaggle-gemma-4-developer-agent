@@ -1,0 +1,155 @@
+{
+  "units": 51,
+  "kind": {
+    "agreement": 47,
+    "fraction": 0.922,
+    "kappa": 0.845,
+    "confusion_first_by_second": {
+      "directive": {
+        "directive": 34,
+        "rationale": 0,
+        "environment": 0,
+        "example": 0
+      },
+      "rationale": {
+        "directive": 0,
+        "rationale": 6,
+        "environment": 2,
+        "example": 0
+      },
+      "environment": {
+        "directive": 0,
+        "rationale": 2,
+        "environment": 6,
+        "example": 0
+      },
+      "example": {
+        "directive": 0,
+        "rationale": 0,
+        "environment": 0,
+        "example": 1
+      }
+    },
+    "disagreements": [
+      {
+        "id": "U07",
+        "first": "rationale",
+        "second": "environment"
+      },
+      {
+        "id": "U09",
+        "first": "rationale",
+        "second": "environment"
+      },
+      {
+        "id": "U13",
+        "first": "environment",
+        "second": "rationale"
+      },
+      {
+        "id": "U21",
+        "first": "environment",
+        "second": "rationale"
+      }
+    ],
+    "second_rater_borderline": [
+      "U02",
+      "U03",
+      "U09",
+      "U17",
+      "U21"
+    ]
+  },
+  "retention": {
+    "partly_counts_as_kept": {
+      "agreement": 49,
+      "fraction": 0.961,
+      "kappa": 0.897,
+      "disagreements": [
+        "U02",
+        "U07"
+      ]
+    },
+    "partly_counts_as_dropped": {
+      "agreement": 51,
+      "fraction": 1.0,
+      "kappa": 1.0,
+      "disagreements": []
+    }
+  },
+  "headline_under_second_rater": {
+    "partly_counts_as_kept": {
+      "rationale": {
+        "dropped": 3,
+        "total": 8,
+        "rate": 0.375
+      },
+      "directive": {
+        "dropped": 5,
+        "total": 34,
+        "rate": 0.147
+      },
+      "rate_ratio": 2.55
+    },
+    "partly_counts_as_dropped": {
+      "rationale": {
+        "dropped": 4,
+        "total": 8,
+        "rate": 0.5
+      },
+      "directive": {
+        "dropped": 5,
+        "total": 34,
+        "rate": 0.147
+      },
+      "rate_ratio": 3.4
+    }
+  },
+  "headline_under_first_rater": {
+    "rationale": {
+      "dropped": 6,
+      "total": 8,
+      "rate": 0.75
+    },
+    "directive": {
+      "dropped": 5,
+      "total": 34,
+      "rate": 0.147
+    },
+    "rate_ratio": 5.1
+  },
+  "second_rater_uncovered_ideas": [
+    {
+      "quote": "If uncertain, apply your best-reasoned edit in the most likely location rather than spending all calls reading.",
+      "kind": "directive"
+    },
+    {
+      "quote": "A wrong edit can be revised",
+      "kind": "rationale"
+    },
+    {
+      "quote": "Cap output short (`head -n 30`).",
+      "kind": "directive"
+    },
+    {
+      "quote": "redirecting output to `/tmp` and inspecting the tail",
+      "kind": "directive"
+    },
+    {
+      "quote": "`git checkout --` any test/config edits before submitting",
+      "kind": "directive"
+    },
+    {
+      "quote": "conclude with a one-sentence summary of the fix",
+      "kind": "directive"
+    },
+    {
+      "quote": "never stall or ask questions",
+      "kind": "directive"
+    },
+    {
+      "quote": "`python3 -m pytest tests/path/test_x.py -x -q -k keyword > /tmp/test_1.log 2>&1; tail -n 35 /tmp/test_1.log`",
+      "kind": "example"
+    }
+  ]
+}

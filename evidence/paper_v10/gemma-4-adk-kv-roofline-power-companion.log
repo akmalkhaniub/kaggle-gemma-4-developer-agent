@@ -1,0 +1,213 @@
+[{"stream_name":"stderr","time":8.951697362,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":8.951763507999999,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":8.951771257,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":8.951776195,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":9.744115958,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":9.74415035,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":9.74415631,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":9.74416103,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":11.445512218,"data":"{\n"}
+,{"stream_name":"stdout","time":11.445548568,"data":"  \"tasks_path\": \"/kaggle/input/competitions/gemma-4-developer-agent/tasks.jsonl\",\n"}
+,{"stream_name":"stdout","time":11.445556093,"data":"  \"tasks_sha256\": \"e4b3fd60f69dbc2b9213e54eeb9636db78aefe92c1d06269d73d9f5f8f3c8ad6\",\n"}
+,{"stream_name":"stdout","time":11.445559985,"data":"  \"task_count\": 129,\n"}
+,{"stream_name":"stdout","time":11.445563546,"data":"  \"problem_bytes_quantiles\": [\n"}
+,{"stream_name":"stdout","time":11.445566933,"data":"    42.0,\n"}
+,{"stream_name":"stdout","time":11.445569983,"data":"    420.0,\n"}
+,{"stream_name":"stdout","time":11.445572943,"data":"    1806.2000000000003,\n"}
+,{"stream_name":"stdout","time":11.445575902,"data":"    10100.0\n"}
+,{"stream_name":"stdout","time":11.445578951,"data":"  ]\n"}
+,{"stream_name":"stdout","time":11.445581843,"data":"}\n"}
+,{"stream_name":"stdout","time":11.46992717,"data":"[\n"}
+,{"stream_name":"stdout","time":11.46996139,"data":"  {\n"}
+,{"stream_name":"stdout","time":11.469967152,"data":"    \"variant\": \"v2\",\n"}
+,{"stream_name":"stdout","time":11.469972292,"data":"    \"prompt_template_bytes\": 5351,\n"}
+,{"stream_name":"stdout","time":11.469977324,"data":"    \"expanded_prompt_bytes_p50\": 5750.0,\n"}
+,{"stream_name":"stdout","time":11.469982261,"data":"    \"expanded_prompt_bytes_p90\": 7136.200000000001\n"}
+,{"stream_name":"stdout","time":11.469987158,"data":"  },\n"}
+,{"stream_name":"stdout","time":11.469991536,"data":"  {\n"}
+,{"stream_name":"stdout","time":11.469994472,"data":"    \"variant\": \"v3\",\n"}
+,{"stream_name":"stdout","time":11.4699975,"data":"    \"prompt_template_bytes\": 3340,\n"}
+,{"stream_name":"stdout","time":11.470000521,"data":"    \"expanded_prompt_bytes_p50\": 3739.0,\n"}
+,{"stream_name":"stdout","time":11.470003678,"data":"    \"expanded_prompt_bytes_p90\": 5125.200000000001\n"}
+,{"stream_name":"stdout","time":11.470006792,"data":"  }\n"}
+,{"stream_name":"stdout","time":11.470009525,"data":"]\n"}
+,{"stream_name":"stdout","time":11.470012848,"data":"Measured template byte reduction: 2011\n"}
+,{"stream_name":"stdout","time":11.470015938,"data":"No tokenizer or serialized tool-schema measurements are claimed.\n"}
+,{"stream_name":"stdout","time":11.543540937,"data":"{\n"}
+,{"stream_name":"stdout","time":11.543577698,"data":"  \"units_total\": 51,\n"}
+,{"stream_name":"stdout","time":11.543583894,"data":"  \"units_retained\": 37,\n"}
+,{"stream_name":"stdout","time":11.543589091,"data":"  \"units_dropped\": 14,\n"}
+,{"stream_name":"stdout","time":11.543613904,"data":"  \"by_kind\": {\n"}
+,{"stream_name":"stdout","time":11.543619555,"data":"    \"directive\": {\n"}
+,{"stream_name":"stdout","time":11.543624276,"data":"      \"v2\": 34,\n"}
+,{"stream_name":"stdout","time":11.543628432,"data":"      \"dropped\": 5\n"}
+,{"stream_name":"stdout","time":11.543632934,"data":"    },\n"}
+,{"stream_name":"stdout","time":11.543636932,"data":"    \"rationale\": {\n"}
+,{"stream_name":"stdout","time":11.543641675,"data":"      \"v2\": 8,\n"}
+,{"stream_name":"stdout","time":11.54364581,"data":"      \"dropped\": 6\n"}
+,{"stream_name":"stdout","time":11.543650608,"data":"    },\n"}
+,{"stream_name":"stdout","time":11.54365471,"data":"    \"environment\": {\n"}
+,{"stream_name":"stdout","time":11.543659177,"data":"      \"v2\": 8,\n"}
+,{"stream_name":"stdout","time":11.54366375,"data":"      \"dropped\": 2\n"}
+,{"stream_name":"stdout","time":11.543668271,"data":"    },\n"}
+,{"stream_name":"stdout","time":11.5436726,"data":"    \"example\": {\n"}
+,{"stream_name":"stdout","time":11.543677172,"data":"      \"v2\": 1,\n"}
+,{"stream_name":"stdout","time":11.543681487,"data":"      \"dropped\": 1\n"}
+,{"stream_name":"stdout","time":11.543685823,"data":"    }\n"}
+,{"stream_name":"stdout","time":11.543690168,"data":"  },\n"}
+,{"stream_name":"stdout","time":11.543695202,"data":"  \"section_bytes\": {\n"}
+,{"stream_name":"stdout","time":11.543698509,"data":"    \"v2\": {\n"}
+,{"stream_name":"stdout","time":11.543701437,"data":"      \"preamble\": 317,\n"}
+,{"stream_name":"stdout","time":11.543704469,"data":"      \"hard limits\": 1577,\n"}
+,{"stream_name":"stdout","time":11.543707762,"data":"      \"call plan\": 529,\n"}
+,{"stream_name":"stdout","time":11.543710661,"data":"      \"procedure\": 2507,\n"}
+,{"stream_name":"stdout","time":11.543713509,"data":"      \"decision rules\": 373,\n"}
+,{"stream_name":"stdout","time":11.543716376999999,"data":"      \"issue\": 48\n"}
+,{"stream_name":"stdout","time":11.543737425,"data":"    },\n"}
+,{"stream_name":"stdout","time":11.54374132,"data":"    \"v3\": {\n"}
+,{"stream_name":"stdout","time":11.543744237,"data":"      \"preamble\": 223,\n"}
+,{"stream_name":"stdout","time":11.54374708,"data":"      \"hard limits\": 924,\n"}
+,{"stream_name":"stdout","time":11.543749944,"data":"      \"call plan\": 444,\n"}
+,{"stream_name":"stdout","time":11.543752798,"data":"      \"procedure\": 1494,\n"}
+,{"stream_name":"stdout","time":11.543755667,"data":"      \"decision rules\": 225,\n"}
+,{"stream_name":"stdout","time":11.54375854,"data":"      \"issue\": 30\n"}
+,{"stream_name":"stdout","time":11.543761386,"data":"    }\n"}
+,{"stream_name":"stdout","time":11.543764135,"data":"  }\n"}
+,{"stream_name":"stdout","time":11.543766945,"data":"}\n"}
+,{"stream_name":"stdout","time":11.543769782,"data":"U02 rationale - Hidden tests derive from the issue text\n"}
+,{"stream_name":"stdout","time":11.543772793,"data":"U07 rationale - An edit on disk counts even without submission\n"}
+,{"stream_name":"stdout","time":11.54377579,"data":"U09 rationale - Test files are reset before grading\n"}
+,{"stream_name":"stdout","time":11.543778667,"data":"U11 example - Heredoc example for /tmp scripts\n"}
+,{"stream_name":"stdout","time":11.543781524,"data":"U12 environment - File tools only accept /workspace paths\n"}
+,{"stream_name":"stdout","time":11.543784585000001,"data":"U17 rationale - pytest prints its verdict at the end\n"}
+,{"stream_name":"stdout","time":11.543787539,"data":"U18 directive - Never call the three graph tools\n"}
+,{"stream_name":"stdout","time":11.543793958,"data":"U19 rationale - Graph tools omit async code and can overflow context\n"}
+,{"stream_name":"stdout","time":11.54379719,"data":"U30 environment - rg and tree are not installed\n"}
+,{"stream_name":"stdout","time":11.543800103,"data":"U36 directive - Use write_file only for genuinely new modules\n"}
+,{"stream_name":"stdout","time":11.543803049,"data":"U38 directive - Fix the root cause\n"}
+,{"stream_name":"stdout","time":11.543805875,"data":"U43 directive - Judge by tests covering the modified path\n"}
+,{"stream_name":"stdout","time":11.543808792,"data":"U45 rationale - git diff alone hides untracked files\n"}
+,{"stream_name":"stdout","time":11.543811769,"data":"U49 directive - Edit where wrong behaviour is produced, not observed\n"}
+,{"stream_name":"stdout","time":11.543814775,"data":"Sensitivity of the rationale-vs-directive contrast to alternative labellings:\n"}
+,{"stream_name":"stdout","time":11.543817777,"data":"  as_labelled | rationales dropped 6 / 8 | directives dropped 5 / 34 | rate ratio 5.1\n"}
+,{"stream_name":"stdout","time":11.543820829,"data":"  borderline_environment_facts_as_rationales | rationales dropped 6 / 11 | directives dropped 5 / 34 | rate ratio 3.71\n"}
+,{"stream_name":"stdout","time":11.543823923,"data":"  partly_retained_units_counted_as_kept | rationales dropped 5 / 8 | directives dropped 4 / 34 | rate ratio 5.3\n"}
+,{"stream_name":"stdout","time":11.543826929,"data":"  both_changes | rationales dropped 5 / 11 | directives dropped 4 / 34 | rate ratio 3.86\n"}
+,{"stream_name":"stdout","time":11.543829979,"data":"  graph_tool_units_excluded | rationales dropped 5 / 7 | directives dropped 4 / 33 | rate ratio 5.9\n"}
+,{"stream_name":"stdout","time":11.543834399,"data":"Rate-ratio range across scenarios: [3.71, 5.9] | leave-one-unit-out: [4.86, 6.2]\n"}
+,{"stream_name":"stdout","time":11.831881828,"data":"{\n"}
+,{"stream_name":"stdout","time":11.831912296,"data":"  \"assumption\": \"binary per-task outcomes; score = pass fraction rounded half-up to 2 decimals\",\n"}
+,{"stream_name":"stdout","time":11.831919176,"data":"  \"scores\": [\n"}
+,{"stream_name":"stdout","time":11.831924121,"data":"    0.18,\n"}
+,{"stream_name":"stdout","time":11.831928564,"data":"    0.15\n"}
+,{"stream_name":"stdout","time":11.831933225,"data":"  ],\n"}
+,{"stream_name":"stdout","time":11.831938372,"data":"  \"smallest_consistent_n\": 33,\n"}
+,{"stream_name":"stdout","time":11.83194354,"data":"  \"consistent_n_count_up_to\": {\n"}
+,{"stream_name":"stdout","time":11.831948203,"data":"    \"n_max\": 300,\n"}
+,{"stream_name":"stdout","time":11.831953016,"data":"    \"count\": 235\n"}
+,{"stream_name":"stdout","time":11.831957303,"data":"  },\n"}
+,{"stream_name":"stdout","time":11.831961956,"data":"  \"inconsistent_n_up_to_129\": [\n"}
+,{"stream_name":"stdout","time":11.831966658,"data":"    1,\n"}
+,{"stream_name":"stdout","time":11.831971183,"data":"    2,\n"}
+,{"stream_name":"stdout","time":11.831975862,"data":"    3,\n"}
+,{"stream_name":"stdout","time":11.831980382,"data":"    4,\n"}
+,{"stream_name":"stdout","time":11.831985076,"data":"    5,\n"}
+,{"stream_name":"stdout","time":11.831989253,"data":"    6,\n"}
+,{"stream_name":"stdout","time":11.831993511,"data":"    7,\n"}
+,{"stream_name":"stdout","time":11.831997811,"data":"    8,\n"}
+,{"stream_name":"stdout","time":11.832002258,"data":"    9,\n"}
+,{"stream_name":"stdout","time":11.832006815,"data":"    10,\n"}
+,{"stream_name":"stdout","time":11.832011708,"data":"    11,\n"}
+,{"stream_name":"stdout","time":11.832016325,"data":"    12,\n"}
+,{"stream_name":"stdout","time":11.832030996,"data":"    13,\n"}
+,{"stream_name":"stdout","time":11.832035222,"data":"    14,\n"}
+,{"stream_name":"stdout","time":11.832039564,"data":"    15,\n"}
+,{"stream_name":"stdout","time":11.832043964,"data":"    16,\n"}
+,{"stream_name":"stdout","time":11.832048293,"data":"    17,\n"}
+,{"stream_name":"stdout","time":11.832052631,"data":"    18,\n"}
+,{"stream_name":"stdout","time":11.832056498,"data":"    19,\n"}
+,{"stream_name":"stdout","time":11.832060688,"data":"    20,\n"}
+,{"stream_name":"stdout","time":11.83206464,"data":"    21,\n"}
+,{"stream_name":"stdout","time":11.832068968,"data":"    22,\n"}
+,{"stream_name":"stdout","time":11.832073213,"data":"    23,\n"}
+,{"stream_name":"stdout","time":11.832077168,"data":"    24,\n"}
+,{"stream_name":"stdout","time":11.832082471,"data":"    25,\n"}
+,{"stream_name":"stdout","time":11.832087018,"data":"    26,\n"}
+,{"stream_name":"stdout","time":11.832091146,"data":"    27,\n"}
+,{"stream_name":"stdout","time":11.832095386,"data":"    28,\n"}
+,{"stream_name":"stdout","time":11.832099564,"data":"    29,\n"}
+,{"stream_name":"stdout","time":11.832103649,"data":"    30,\n"}
+,{"stream_name":"stdout","time":11.832107853,"data":"    31,\n"}
+,{"stream_name":"stdout","time":11.832112103,"data":"    32,\n"}
+,{"stream_name":"stdout","time":11.832116509,"data":"    35,\n"}
+,{"stream_name":"stdout","time":11.832120868,"data":"    36,\n"}
+,{"stream_name":"stdout","time":11.832125376,"data":"    37,\n"}
+,{"stream_name":"stdout","time":11.83212997,"data":"    38,\n"}
+,{"stream_name":"stdout","time":11.832134118,"data":"    41,\n"}
+,{"stream_name":"stdout","time":11.832138098,"data":"    42,\n"}
+,{"stream_name":"stdout","time":11.832142241,"data":"    43,\n"}
+,{"stream_name":"stdout","time":11.83214635,"data":"    44,\n"}
+,{"stream_name":"stdout","time":11.832150511,"data":"    45,\n"}
+,{"stream_name":"stdout","time":11.832154585,"data":"    46,\n"}
+,{"stream_name":"stdout","time":11.832158602,"data":"    47,\n"}
+,{"stream_name":"stdout","time":11.832162924,"data":"    48,\n"}
+,{"stream_name":"stdout","time":11.832167339,"data":"    49,\n"}
+,{"stream_name":"stdout","time":11.832171856,"data":"    50,\n"}
+,{"stream_name":"stdout","time":11.832176388,"data":"    51,\n"}
+,{"stream_name":"stdout","time":11.832181058,"data":"    52,\n"}
+,{"stream_name":"stdout","time":11.832185613,"data":"    53,\n"}
+,{"stream_name":"stdout","time":11.832190208,"data":"    54,\n"}
+,{"stream_name":"stdout","time":11.832194805,"data":"    56,\n"}
+,{"stream_name":"stdout","time":11.832199475,"data":"    57,\n"}
+,{"stream_name":"stdout","time":11.832203985,"data":"    58,\n"}
+,{"stream_name":"stdout","time":11.832208532,"data":"    59,\n"}
+,{"stream_name":"stdout","time":11.832212578,"data":"    63,\n"}
+,{"stream_name":"stdout","time":11.832216856,"data":"    64,\n"}
+,{"stream_name":"stdout","time":11.832220789,"data":"    69,\n"}
+,{"stream_name":"stdout","time":11.832224833,"data":"    70,\n"}
+,{"stream_name":"stdout","time":11.832229244,"data":"    75,\n"}
+,{"stream_name":"stdout","time":11.832233695,"data":"    76,\n"}
+,{"stream_name":"stdout","time":11.83226424,"data":"    77,\n"}
+,{"stream_name":"stdout","time":11.832269055,"data":"    81,\n"}
+,{"stream_name":"stdout","time":11.832273729,"data":"    83,\n"}
+,{"stream_name":"stdout","time":11.83227824,"data":"    86,\n"}
+,{"stream_name":"stdout","time":11.832289024,"data":"    90\n"}
+,{"stream_name":"stdout","time":11.832293661,"data":"  ],\n"}
+,{"stream_name":"stdout","time":11.832298282,"data":"  \"task_gap_min_max_for_n_le_129\": [\n"}
+,{"stream_name":"stdout","time":11.832303276,"data":"    1,\n"}
+,{"stream_name":"stdout","time":11.832307418,"data":"    4\n"}
+,{"stream_name":"stdout","time":11.832311928,"data":"  ],\n"}
+,{"stream_name":"stdout","time":11.832316371,"data":"  \"required_n_two_sigma_independent\": 1177\n"}
+,{"stream_name":"stdout","time":11.832321176,"data":"}\n"}
+,{"stream_name":"stdout","time":11.832325811,"data":"Gap (tasks) at selected N: {33: [1, 1], 62: [2, 2], 100: [3, 3], 120: [3, 4], 129: [4, 4]}\n"}
+,{"stream_name":"stdout","time":12.612613993,"data":"{\n"}
+,{"stream_name":"stdout","time":12.61264346,"data":"  \"v2\": \"3a47fac2c3e0a2b21d6aba2c4cd21ad97cb7d04184c361f0a1d07b442a6a9707\",\n"}
+,{"stream_name":"stdout","time":12.612649753,"data":"  \"v3\": \"5dd671cffb0332a325ac0c30c4dd97ccfab0f0537c37bd536b953bbe47ada0bd\"\n"}
+,{"stream_name":"stdout","time":12.61265511,"data":"}\n"}
+,{"stream_name":"stdout","time":12.666169184,"data":"Wrote agent.yaml               (325 bytes)\n"}
+,{"stream_name":"stdout","time":12.666199328,"data":"Wrote configs/sampling.yaml    (129 bytes)\n"}
+,{"stream_name":"stdout","time":12.666204736,"data":"Wrote eval_config.yaml         (94 bytes)\n"}
+,{"stream_name":"stdout","time":12.666209176,"data":"Wrote prompts/system.md        (3,340 bytes)\n"}
+,{"stream_name":"stdout","time":12.698134893,"data":"Schema OK: root=agent.yaml | files=4 | model=gemma-4-31b-it-qat-w4a16-ct\n"}
+,{"stream_name":"stderr","time":73.051175229,"data":"\u001b[92m22:22:29 - LiteLLM:WARNING\u001b[0m: get_model_cost_map.py:290 - LiteLLM: Failed to fetch remote model cost map from https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: [Errno -3] Temporary failure in name resolution. Falling back to local backup.\n"}
+,{"stream_name":"stderr","time":73.05121162,"data":"\n"}
+,{"stream_name":"stderr","time":73.051218933,"data":"\u001b[92m22:22:29 - LiteLLM:WARNING\u001b[0m: get_model_cost_map.py:290 - LiteLLM: Failed to fetch remote model cost map from https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: [Errno -3] Temporary failure in name resolution. Falling back to local backup.\n"}
+,{"stream_name":"stdout","time":80.214674395,"data":"validate_directory: PASSED\n"}
+,{"stream_name":"stdout","time":80.214715255,"data":"compile_submission: PASSED (root_agent='swe_agent', tools=6)\n"}
+,{"stream_name":"stdout","time":80.248901965,"data":"Submission ready: /kaggle/working/submission.zip (2,608 bytes) | SHA-256: 4029424ef9242aa53d0e32752b2f89c1064dd82b57d85b80145135426587496b\n"}
+,{"stream_name":"stdout","time":80.248932861,"data":"  agent.yaml\n"}
+,{"stream_name":"stdout","time":80.248939139,"data":"  configs/sampling.yaml\n"}
+,{"stream_name":"stdout","time":80.248945041,"data":"  eval_config.yaml\n"}
+,{"stream_name":"stdout","time":80.248950623,"data":"  prompts/system.md\n"}
+,{"stream_name":"stderr","time":86.139375057,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":86.139413236,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":86.357628605,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":86.357661574,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":87.336198058,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":87.449015615,"data":"[NbConvertApp] Writing 289522 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":90.87055655,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":91.718404832,"data":"[NbConvertApp] Support files will be in __results___files/\n"}
+,{"stream_name":"stderr","time":91.718438646,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":91.718771764,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":91.719018954,"data":"[NbConvertApp] Writing 459465 bytes to __results__.html\n"}
+]

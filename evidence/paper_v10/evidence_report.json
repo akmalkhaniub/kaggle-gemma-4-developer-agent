@@ -1,0 +1,640 @@
+{
+  "provenance": {
+    "tasks_path": "/kaggle/input/competitions/gemma-4-developer-agent/tasks.jsonl",
+    "tasks_sha256": "e4b3fd60f69dbc2b9213e54eeb9636db78aefe92c1d06269d73d9f5f8f3c8ad6",
+    "task_count": 129,
+    "problem_bytes_quantiles": [
+      42.0,
+      420.0,
+      1806.2000000000003,
+      10100.0
+    ]
+  },
+  "prompt_measurements": [
+    {
+      "variant": "v2",
+      "prompt_template_bytes": 5351,
+      "expanded_prompt_bytes_p50": 5750.0,
+      "expanded_prompt_bytes_p90": 7136.200000000001
+    },
+    {
+      "variant": "v3",
+      "prompt_template_bytes": 3340,
+      "expanded_prompt_bytes_p50": 3739.0,
+      "expanded_prompt_bytes_p90": 5125.200000000001
+    }
+  ],
+  "template_bytes_saved": 2011,
+  "verified_historical_scores": {
+    "58201114": 0.18,
+    "58250000": 0.15
+  },
+  "score_delta": -0.03,
+  "limitations": [
+    "One evaluation per variant",
+    "Multiple configuration changes",
+    "No paired task outcomes",
+    "No causal solve-rate attribution",
+    "No inference executed by CPU companion"
+  ],
+  "instruction_audit": {
+    "units_total": 51,
+    "units_retained": 37,
+    "units_dropped": 14,
+    "by_kind": {
+      "directive": {
+        "v2": 34,
+        "dropped": 5
+      },
+      "rationale": {
+        "v2": 8,
+        "dropped": 6
+      },
+      "environment": {
+        "v2": 8,
+        "dropped": 2
+      },
+      "example": {
+        "v2": 1,
+        "dropped": 1
+      }
+    },
+    "dropped": [
+      {
+        "id": "U02",
+        "kind": "rationale",
+        "section": "preamble",
+        "summary": "Hidden tests derive from the issue text"
+      },
+      {
+        "id": "U07",
+        "kind": "rationale",
+        "section": "hard limits",
+        "summary": "An edit on disk counts even without submission"
+      },
+      {
+        "id": "U09",
+        "kind": "rationale",
+        "section": "hard limits",
+        "summary": "Test files are reset before grading"
+      },
+      {
+        "id": "U11",
+        "kind": "example",
+        "section": "hard limits",
+        "summary": "Heredoc example for /tmp scripts"
+      },
+      {
+        "id": "U12",
+        "kind": "environment",
+        "section": "hard limits",
+        "summary": "File tools only accept /workspace paths"
+      },
+      {
+        "id": "U17",
+        "kind": "rationale",
+        "section": "hard limits",
+        "summary": "pytest prints its verdict at the end"
+      },
+      {
+        "id": "U18",
+        "kind": "directive",
+        "section": "hard limits",
+        "summary": "Never call the three graph tools"
+      },
+      {
+        "id": "U19",
+        "kind": "rationale",
+        "section": "hard limits",
+        "summary": "Graph tools omit async code and can overflow context"
+      },
+      {
+        "id": "U30",
+        "kind": "environment",
+        "section": "procedure",
+        "summary": "rg and tree are not installed"
+      },
+      {
+        "id": "U36",
+        "kind": "directive",
+        "section": "procedure",
+        "summary": "Use write_file only for genuinely new modules"
+      },
+      {
+        "id": "U38",
+        "kind": "directive",
+        "section": "procedure",
+        "summary": "Fix the root cause"
+      },
+      {
+        "id": "U43",
+        "kind": "directive",
+        "section": "procedure",
+        "summary": "Judge by tests covering the modified path"
+      },
+      {
+        "id": "U45",
+        "kind": "rationale",
+        "section": "procedure",
+        "summary": "git diff alone hides untracked files"
+      },
+      {
+        "id": "U49",
+        "kind": "directive",
+        "section": "decision rules",
+        "summary": "Edit where wrong behaviour is produced, not observed"
+      }
+    ],
+    "units": [
+      {
+        "id": "U01",
+        "section": "preamble",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U02",
+        "section": "preamble",
+        "kind": "rationale",
+        "dropped": true
+      },
+      {
+        "id": "U03",
+        "section": "preamble",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U04",
+        "section": "hard limits",
+        "kind": "environment",
+        "dropped": false
+      },
+      {
+        "id": "U05",
+        "section": "hard limits",
+        "kind": "environment",
+        "dropped": false
+      },
+      {
+        "id": "U06",
+        "section": "hard limits",
+        "kind": "environment",
+        "dropped": false
+      },
+      {
+        "id": "U07",
+        "section": "hard limits",
+        "kind": "rationale",
+        "dropped": true
+      },
+      {
+        "id": "U08",
+        "section": "hard limits",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U09",
+        "section": "hard limits",
+        "kind": "rationale",
+        "dropped": true
+      },
+      {
+        "id": "U10",
+        "section": "hard limits",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U11",
+        "section": "hard limits",
+        "kind": "example",
+        "dropped": true
+      },
+      {
+        "id": "U12",
+        "section": "hard limits",
+        "kind": "environment",
+        "dropped": true
+      },
+      {
+        "id": "U13",
+        "section": "hard limits",
+        "kind": "environment",
+        "dropped": false
+      },
+      {
+        "id": "U14",
+        "section": "hard limits",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U15",
+        "section": "hard limits",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U16",
+        "section": "hard limits",
+        "kind": "environment",
+        "dropped": false
+      },
+      {
+        "id": "U17",
+        "section": "hard limits",
+        "kind": "rationale",
+        "dropped": true
+      },
+      {
+        "id": "U18",
+        "section": "hard limits",
+        "kind": "directive",
+        "dropped": true
+      },
+      {
+        "id": "U19",
+        "section": "hard limits",
+        "kind": "rationale",
+        "dropped": true
+      },
+      {
+        "id": "U20",
+        "section": "hard limits",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U21",
+        "section": "hard limits",
+        "kind": "environment",
+        "dropped": false
+      },
+      {
+        "id": "U22",
+        "section": "call plan",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U23",
+        "section": "call plan",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U24",
+        "section": "call plan",
+        "kind": "rationale",
+        "dropped": false
+      },
+      {
+        "id": "U25",
+        "section": "call plan",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U26",
+        "section": "call plan",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U27",
+        "section": "procedure",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U28",
+        "section": "procedure",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U29",
+        "section": "procedure",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U30",
+        "section": "procedure",
+        "kind": "environment",
+        "dropped": true
+      },
+      {
+        "id": "U31",
+        "section": "procedure",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U32",
+        "section": "procedure",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U33",
+        "section": "procedure",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U34",
+        "section": "procedure",
+        "kind": "rationale",
+        "dropped": false
+      },
+      {
+        "id": "U35",
+        "section": "procedure",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U36",
+        "section": "procedure",
+        "kind": "directive",
+        "dropped": true
+      },
+      {
+        "id": "U37",
+        "section": "procedure",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U38",
+        "section": "procedure",
+        "kind": "directive",
+        "dropped": true
+      },
+      {
+        "id": "U39",
+        "section": "procedure",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U40",
+        "section": "procedure",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U41",
+        "section": "procedure",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U42",
+        "section": "procedure",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U43",
+        "section": "procedure",
+        "kind": "directive",
+        "dropped": true
+      },
+      {
+        "id": "U44",
+        "section": "procedure",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U45",
+        "section": "procedure",
+        "kind": "rationale",
+        "dropped": true
+      },
+      {
+        "id": "U46",
+        "section": "procedure",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U47",
+        "section": "procedure",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U48",
+        "section": "decision rules",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U49",
+        "section": "decision rules",
+        "kind": "directive",
+        "dropped": true
+      },
+      {
+        "id": "U50",
+        "section": "decision rules",
+        "kind": "directive",
+        "dropped": false
+      },
+      {
+        "id": "U51",
+        "section": "decision rules",
+        "kind": "directive",
+        "dropped": false
+      }
+    ],
+    "sensitivity": {
+      "scenarios": {
+        "as_labelled": {
+          "rationale": {
+            "dropped": 6,
+            "total": 8,
+            "rate": 0.75
+          },
+          "directive": {
+            "dropped": 5,
+            "total": 34,
+            "rate": 0.147
+          },
+          "rate_ratio": 5.1
+        },
+        "borderline_environment_facts_as_rationales": {
+          "rationale": {
+            "dropped": 6,
+            "total": 11,
+            "rate": 0.545
+          },
+          "directive": {
+            "dropped": 5,
+            "total": 34,
+            "rate": 0.147
+          },
+          "rate_ratio": 3.71
+        },
+        "partly_retained_units_counted_as_kept": {
+          "rationale": {
+            "dropped": 5,
+            "total": 8,
+            "rate": 0.625
+          },
+          "directive": {
+            "dropped": 4,
+            "total": 34,
+            "rate": 0.118
+          },
+          "rate_ratio": 5.3
+        },
+        "both_changes": {
+          "rationale": {
+            "dropped": 5,
+            "total": 11,
+            "rate": 0.455
+          },
+          "directive": {
+            "dropped": 4,
+            "total": 34,
+            "rate": 0.118
+          },
+          "rate_ratio": 3.86
+        },
+        "graph_tool_units_excluded": {
+          "rationale": {
+            "dropped": 5,
+            "total": 7,
+            "rate": 0.714
+          },
+          "directive": {
+            "dropped": 4,
+            "total": 33,
+            "rate": 0.121
+          },
+          "rate_ratio": 5.9
+        }
+      },
+      "rate_ratio_range_scenarios": [
+        3.71,
+        5.9
+      ],
+      "rate_ratio_range_leave_one_out": [
+        4.86,
+        6.2
+      ]
+    },
+    "section_bytes": {
+      "v2": {
+        "preamble": 317,
+        "hard limits": 1577,
+        "call plan": 529,
+        "procedure": 2507,
+        "decision rules": 373,
+        "issue": 48
+      },
+      "v3": {
+        "preamble": 223,
+        "hard limits": 924,
+        "call plan": 444,
+        "procedure": 1494,
+        "decision rules": 225,
+        "issue": 30
+      }
+    }
+  },
+  "score_resolution": {
+    "assumption": "binary per-task outcomes; score = pass fraction rounded half-up to 2 decimals",
+    "scores": [
+      0.18,
+      0.15
+    ],
+    "smallest_consistent_n": 33,
+    "consistent_n_count_up_to": {
+      "n_max": 300,
+      "count": 235
+    },
+    "inconsistent_n_up_to_129": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      35,
+      36,
+      37,
+      38,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      56,
+      57,
+      58,
+      59,
+      63,
+      64,
+      69,
+      70,
+      75,
+      76,
+      77,
+      81,
+      83,
+      86,
+      90
+    ],
+    "task_gap_min_max_for_n_le_129": [
+      1,
+      4
+    ],
+    "required_n_two_sigma_independent": 1177
+  },
+  "bundle_content_digest": {
+    "v2": "3a47fac2c3e0a2b21d6aba2c4cd21ad97cb7d04184c361f0a1d07b442a6a9707",
+    "v3": "5dd671cffb0332a325ac0c30c4dd97ccfab0f0537c37bd536b953bbe47ada0bd"
+  }
+}
